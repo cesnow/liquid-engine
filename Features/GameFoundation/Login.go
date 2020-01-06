@@ -1,0 +1,78 @@
+package GameFoundation
+
+import (
+	"encoding/json"
+	"github.com/cesnow/LiquidEngine/Logger"
+	"github.com/cesnow/LiquidEngine/Middlewares"
+	"github.com/cesnow/LiquidEngine/Models"
+	"github.com/cesnow/LiquidEngine/Modules/LiquidSDK"
+	"github.com/gin-gonic/gin"
+	"github.com/mitchellh/mapstructure"
+	"net/http"
+)
+
+func s(source interface{}) interface{} {
+	var result interface{}
+	config := &mapstructure.DecoderConfig{TagName: "json"}
+	config.Result = &result
+	decoder, _ := mapstructure.NewDecoder(config)
+	_ = decoder.Decode(&source)
+	return result
+}
+
+func RouteLogin(c *gin.Context) {
+
+	var command *LiquidSDK.CmdAccount
+	_ = json.Unmarshal(c.MustGet("CommandData").([]byte), &command)
+	Logger.SysLog.Debugf("[CMD][Login] %+v", command)
+
+	result := &LiquidSDK.CmdAccountResponse{
+		AutoId:     nil,
+		InviteCode: nil,
+	}
+
+	var liquidUser *Models.LiquidUser
+
+	if command.FromType == "guest" {
+		autoId := command.FromId
+		inviteCode := command.FromToken
+		liquidUser = Models.FindLiquidGuestUser(autoId) // find auto_id
+		if liquidUser == nil {
+			liquidUser = Models.CreateLiquidUser(command.FromType, "")
+		} else {
+			if liquidUser.FromType != "guest" || inviteCode != liquidUser.InviteCode {
+				c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+				return
+			}
+		}
+	} else {
+
+		if command.FromId == "" || command.FromToken == "" {
+			c.String(http.StatusOK, Middlewares.GetLiquidResult(gin.H{"data": "from_id or from_token is empty"}))
+			return
+		}
+
+		// TODO: Customize Validate User Data (Unsupported)
+		//ResultValidate := Validate(command.FromType, command.FromId, command.FromToken)
+		//
+		//if ResultValidate == nil {
+		//	c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		//	return
+		//}
+
+		liquidUser = Models.FindLiquidUserFromType(command.FromType, command.FromId) // find from_type, from_id
+		if liquidUser == nil {
+			liquidUser = Models.CreateLiquidUser(command.FromType, command.FromId)
+		}
+
+	}
+
+	// TODO: BlockSystem (Unsupported)
+
+	if liquidUser != nil {
+		result.AutoId = &liquidUser.AutoId
+		result.InviteCode = &liquidUser.InviteCode
+	}
+
+	c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+}
