@@ -13,7 +13,7 @@ type LiquidAdminConfCounterSetting struct {
 	Counter int    `json:"counter" bson:"counter"`
 }
 
-const initAutoId = 1000001
+const initAutoId = 1000000
 
 func GetAutoID() string {
 	filter := bson.M{"admin": "auto_id"}
