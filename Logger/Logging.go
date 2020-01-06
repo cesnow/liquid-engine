@@ -9,12 +9,12 @@ import (
 	"runtime"
 )
 
-var SysLog = New("Engine")
+var SysLog = New("Engine", zapcore.InfoLevel)
 
-func New(service string) *zap.SugaredLogger {
+func New(service string, level zapcore.Level) *zap.SugaredLogger {
 	syncWriter := getLoggerSync(service)
 	encoder := getEncoder()
-	core := zapcore.NewCore(encoder, syncWriter, zapcore.DebugLevel)
+	core := zapcore.NewCore(encoder, syncWriter, level)
 	logger := zap.New(core)
 	sugaredLogger := logger.Sugar()
 	defer sugaredLogger.Sync()
