@@ -12,7 +12,7 @@ import (
 type IAMQP interface {
 	Name() string
 	SendMessage(string, string)
-	ReceiveMessage(string)
+	ReceiveMessage(string, func(interface{}))
 	GetProtocolVersion() int8
 }
 

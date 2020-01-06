@@ -19,7 +19,7 @@ func (a0 *AMQPv0) SendMessage(queue, msg string) {
 
 }
 
-func (a0 *AMQPv0) ReceiveMessage(queue string) {
+func (a0 *AMQPv0) ReceiveMessage(queue string, f func(interface{})) {
 }
 func (a0 *AMQPv0) GetProtocolVersion() int8 {
 	return 0
