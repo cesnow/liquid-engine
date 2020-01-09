@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package RPC;
+
+service GameAdapter {
+    rpc Command (CmdCommand) returns (CmdCommandReply) {
+    }
+}
+
+message CmdCommand {
+    string UserID = 1;
+    string UserToken = 2;
+    string Platform = 3;
+    string CmdId = 4;
+    uint64 CmdSn = 5;
+    string CmdName = 6;
+    bytes CmdData = 7;
+}
+
+message CmdCommandReply {
+    bytes CmdData = 10;
+}
