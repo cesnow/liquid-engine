@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package RPC;
+package LiquidRpc;
 
 service GameAdapter {
     rpc Command (CmdCommand) returns (CmdCommandReply) {
@@ -18,5 +18,5 @@ message CmdCommand {
 }
 
 message CmdCommandReply {
-    bytes CmdData = 10;
+    bytes CmdData = 1;
 }
