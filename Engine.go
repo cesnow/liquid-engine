@@ -95,8 +95,8 @@ func (engine *Engine) Serve() {
 	server := &http.Server{
 		Addr:           endPoint,
 		Handler:        engine.ginEngine,
-		ReadTimeout:    time.Duration(engine.Config.Gin.ReadTimeout) * time.Microsecond,
-		WriteTimeout:   time.Duration(engine.Config.Gin.WriteTimeout) * time.Microsecond,
+		ReadTimeout:    time.Duration(engine.Config.Gin.ReadTimeout) * time.Millisecond,
+		WriteTimeout:   time.Duration(engine.Config.Gin.WriteTimeout) * time.Millisecond,
 		MaxHeaderBytes: maxHeaderBytes,
 	}
 
