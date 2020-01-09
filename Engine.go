@@ -63,6 +63,7 @@ func New() *Engine {
 	LiquidSDK.GetServer().InitializeSystemDocIndexes()
 	LiquidSDK.GetServer().InitCodenameKey()
 	engine.initGinEngine()
+	engine.initGRpcTraffic()
 	return engine
 }
 
@@ -125,4 +126,12 @@ func (engine *Engine) Serve() {
 
 	<-exitChan
 	Logger.SysLog.Warn("[Engine] Shutdown Server")
+}
+
+func (engine *Engine) initGRpcTraffic() {
+	rpcClient, err := LiquidSDK.GameRpcConnection()
+	if err == nil {
+		LiquidSDK.GetServer().SetGameRpcConnection(rpcClient)
+		Logger.SysLog.Infof("[Engine] GRpc Command Traffic ON")
+	}
 }

@@ -1,15 +1,12 @@
 package GameFoundation
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/cesnow/LiquidEngine/Logger"
 	"github.com/cesnow/LiquidEngine/Middlewares"
-	"github.com/cesnow/LiquidEngine/Modules/LiquidRpc"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidSDK"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc"
 	"net/http"
 )
 
@@ -51,7 +48,7 @@ func RouteCommand(c *gin.Context) {
 	}
 
 	// gRpc Routing Mode Checking
-	if rpcResult, rpcErr := CommandGRpc(command); rpcErr != nil {
+	if rpcResult, rpcErr := GRpcCommand(command); rpcErr != nil {
 		gameFeature := LiquidSDK.GetServer().GetGameFeature(*command.CmdId)
 		if gameFeature == nil {
 			c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
@@ -67,27 +64,4 @@ func RouteCommand(c *gin.Context) {
 
 	result.CmdSn = command.CmdSn
 	c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
-}
-
-func CommandGRpc(command *LiquidSDK.CmdCommand) ([]byte, error) {
-	conn, err := grpc.Dial("localhost:9999", grpc.WithInsecure())
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-	c := LiquidRpc.NewGameAdapterClient(conn)
-	marshalCmdData, _ := json.Marshal(command.CmdData)
-	r, err := c.Command(context.Background(), &LiquidRpc.CmdCommand{
-		UserID:    *command.LiquidId,
-		UserToken: *command.LiquidToken,
-		Platform:  *command.Platform,
-		CmdId:     *command.CmdId,
-		CmdSn:     uint64(*command.CmdSn),
-		CmdName:   *command.CmdName,
-		CmdData:   marshalCmdData,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return r.CmdData, nil
 }
