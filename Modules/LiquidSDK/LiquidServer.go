@@ -18,17 +18,26 @@ func (server *LiquidServer) SetCodeName(codename string) {
 	server.CodeName = codename
 }
 
+func (server *LiquidServer) GetKeyStatic() string {
+	if time.Now().Sub(server.LiquidKeyUpdate).Minutes() > 60 {
+		return server.GetKey()
+	}
+	return server.LiquidKey
+}
+
 func (server *LiquidServer) GetKey() string {
 	RedisLiquidKeyName := fmt.Sprintf(liquidKeyTemplate, server.CodeName)
 	LiquidKey, GetKeyErr := server.GetCacheDb().Get(RedisLiquidKeyName)
 	if GetKeyErr != nil {
 		server.GenerateKey()
+		server.LiquidKeyUpdate = time.Now()
 		return server.LiquidKey
 	}
 	ReceivedLiquidKey := string(LiquidKey)
 	if ReceivedLiquidKey != server.LiquidKey {
 		server.LiquidKey = ReceivedLiquidKey
 	}
+	server.LiquidKeyUpdate = time.Now()
 	return server.LiquidKey
 }
 
@@ -43,7 +52,7 @@ func (server *LiquidServer) InitCodenameKey() {
 	Logger.SysLog.Infof("[Engine] System Key -> %s", server.LiquidKey)
 }
 
-func (server *LiquidServer) InitRpcTraffic(conf *Settings.AppConf){
+func (server *LiquidServer) InitRpcTraffic(conf *Settings.AppConf) {
 	if !conf.RpcCommandMode {
 		return
 	}

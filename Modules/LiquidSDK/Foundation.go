@@ -5,6 +5,7 @@ import (
 	"github.com/cesnow/LiquidEngine/Modules/LiquidRpc"
 	"github.com/cesnow/LiquidEngine/Modules/MsgQueue"
 	"sync"
+	"time"
 )
 
 type ILiquidServer interface {
@@ -13,6 +14,7 @@ type ILiquidServer interface {
 type LiquidServer struct {
 	CodeName        string
 	LiquidKey       string
+	LiquidKeyUpdate time.Time
 	TokenExpireTime int
 
 	systemGameDict map[string]IGameSystem

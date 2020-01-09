@@ -15,7 +15,7 @@ import (
 func GetLiquidData() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		CodenameLiquidKey := LiquidSDK.GetServer().GetKey()
+		CodenameLiquidKey := LiquidSDK.GetServer().GetKeyStatic()
 
 		// ginContext.GetRawData()
 		// c.Request.Body.Read(DataBodyBuf)
