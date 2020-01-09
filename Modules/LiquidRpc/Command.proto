@@ -3,20 +3,18 @@ syntax = "proto3";
 package LiquidRpc;
 
 service GameAdapter {
-    rpc Command (CmdCommand) returns (CmdCommandReply) {
+    rpc Command (RpcCmdCommand) returns (RpcCmdCommandReply) {
     }
 }
 
-message CmdCommand {
+message RpcCmdCommand {
     string UserID = 1;
-    string UserToken = 2;
-    string Platform = 3;
-    string CmdId = 4;
-    uint64 CmdSn = 5;
-    string CmdName = 6;
-    bytes CmdData = 7;
+    string Platform = 2;
+    string CmdId = 3;
+    string CmdName = 4;
+    bytes CmdData = 5;
 }
 
-message CmdCommandReply {
+message RpcCmdCommandReply {
     bytes CmdData = 1;
 }

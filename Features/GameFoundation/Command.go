@@ -48,7 +48,15 @@ func RouteCommand(c *gin.Context) {
 	}
 
 	// gRpc Routing Mode Checking
-	if rpcResult, rpcErr := GRpcCommand(command); rpcErr != nil {
+	if LiquidSDK.GetServer().GetRpcTrafficEnabled(){
+		if rpcResult, rpcErr := GRpcCommand(command); rpcErr != nil {
+			Logger.SysLog.Warnf("[CMD][Command] RPC Command Transfer Failed, %s", rpcErr)
+		} else {
+			var CmdResult interface{}
+			_ = json.Unmarshal(rpcResult, &CmdResult)
+			result.CmdData = CmdResult
+		}
+	}else{
 		gameFeature := LiquidSDK.GetServer().GetGameFeature(*command.CmdId)
 		if gameFeature == nil {
 			c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
@@ -56,10 +64,6 @@ func RouteCommand(c *gin.Context) {
 		}
 		runCommandData := gameFeature.RunCommand(command)
 		result.CmdData = runCommandData
-	} else {
-		var CmdResult interface{}
-		_ = json.Unmarshal(rpcResult, &CmdResult)
-		result.CmdData = CmdResult
 	}
 
 	result.CmdSn = command.CmdSn

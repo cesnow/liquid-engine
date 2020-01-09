@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/cesnow/LiquidEngine/Logger"
+	"github.com/cesnow/LiquidEngine/Settings"
 	"strconv"
 	"time"
 )
@@ -40,6 +41,19 @@ func (server *LiquidServer) InitCodenameKey() {
 		server.LiquidKey = string(LiquidKey)
 	}
 	Logger.SysLog.Infof("[Engine] System Key -> %s", server.LiquidKey)
+}
+
+func (server *LiquidServer) InitRpcTraffic(conf *Settings.AppConf){
+	if !conf.RpcCommandMode {
+		return
+	}
+	Logger.SysLog.Infof("[Engine] RPC Enabled, Wait For Game RPC Ready ...")
+	rpcClient, err := GameRpcConnection()
+	if err == nil {
+		server.gameRpcConnection = rpcClient
+		server.enableRpcTraffic = true
+		Logger.SysLog.Infof("[Engine] RPC Command Traffic Available")
+	}
 }
 
 func (server *LiquidServer) GenerateKey() {

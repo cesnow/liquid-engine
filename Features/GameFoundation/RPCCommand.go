@@ -9,20 +9,14 @@ import (
 )
 
 func GRpcCommand(command *LiquidSDK.CmdCommand) ([]byte, error) {
-
-	c, err := LiquidSDK.GetServer().GetGameRpcConnection()
-	if err != nil {
-		return nil, err
-	}
+	c := LiquidSDK.GetServer().GetGameRpcConnection()
 	marshalCmdData, _ := json.Marshal(command.CmdData)
-	r, err := c.Command(context.Background(), &LiquidRpc.CmdCommand{
-		UserID:    *command.LiquidId,
-		UserToken: *command.LiquidToken,
-		Platform:  *command.Platform,
-		CmdId:     *command.CmdId,
-		CmdSn:     uint64(*command.CmdSn),
-		CmdName:   *command.CmdName,
-		CmdData:   marshalCmdData,
+	r, err := c.Command(context.Background(), &LiquidRpc.RpcCmdCommand{
+		UserID:   *command.LiquidId,
+		Platform: *command.Platform,
+		CmdId:    *command.CmdId,
+		CmdName:  *command.CmdName,
+		CmdData:  marshalCmdData,
 	})
 	if err != nil {
 		Logger.SysLog.Warnf("[Engine] Game Rpc Traffic Failed, %+v", err)

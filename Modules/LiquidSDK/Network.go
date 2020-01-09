@@ -1,7 +1,6 @@
 package LiquidSDK
 
 import (
-	"errors"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidRpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
@@ -12,12 +11,12 @@ func GameRpcConnection() (LiquidRpc.GameAdapterClient, error) {
 
 	keepAlive := keepalive.ClientParameters{
 		Time:                10 * time.Second,
-		Timeout:             time.Second,
+		Timeout:             2 * time.Second,
 		PermitWithoutStream: true,
 	}
 
 	conn, err := grpc.Dial(
-		"localhost:9999",
+		"0.0.0.0:9999",
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 		grpc.WithKeepaliveParams(keepAlive),
@@ -30,14 +29,10 @@ func GameRpcConnection() (LiquidRpc.GameAdapterClient, error) {
 	return c, nil
 }
 
-func (server *LiquidServer) SetGameRpcConnection(client LiquidRpc.GameAdapterClient) {
-	server.gameRpcConnection = client
-	server.enableRpcTraffic = true
+func (server *LiquidServer) GetRpcTrafficEnabled() bool {
+	return server.enableRpcTraffic
 }
 
-func (server *LiquidServer) GetGameRpcConnection() (LiquidRpc.GameAdapterClient, error) {
-	if server.enableRpcTraffic {
-		return server.gameRpcConnection, nil
-	}
-	return nil, errors.New("")
+func (server *LiquidServer) GetGameRpcConnection() LiquidRpc.GameAdapterClient {
+	return server.gameRpcConnection
 }
