@@ -33,16 +33,7 @@ func (e *RpcCmdCommand) Command(ctx context.Context, req *LiquidRpc.RpcCmdComman
 			CmdData: nil,
 		}, nil
 	}
-	command := &CmdCommand{
-		LiquidId:    &req.UserID,
-		LiquidToken: nil,
-		Platform:    &req.Platform,
-		CmdId:       &req.CmdId,
-		CmdSn:       nil,
-		CmdName:     &req.CmdName,
-		CmdData:     req.CmdData,
-	}
-	runCommandData := gameFeature.RunCommand(command)
+	runCommandData := gameFeature.RunRpcCommand(req)
 	marshalCommandData, _ := json.Marshal(runCommandData)
 	return &LiquidRpc.RpcCmdCommandReply{
 		CmdData: marshalCommandData,

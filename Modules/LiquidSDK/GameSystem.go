@@ -1,12 +1,15 @@
 package LiquidSDK
 
 import (
+	"encoding/json"
 	"github.com/cesnow/LiquidEngine/Logger"
+	"github.com/cesnow/LiquidEngine/Modules/LiquidRpc"
 )
 
 type IGameSystem interface {
 	RunCommand(*CmdCommand) interface{}
 	RunDirectCommand(*CmdCommand) interface{}
+	RunRpcCommand(*LiquidRpc.RpcCmdCommand) interface{}
 }
 
 type GameSystem struct {
@@ -25,6 +28,18 @@ func (gameSystem *GameSystem) RunCommand(data *CmdCommand) interface{} {
 func (gameSystem *GameSystem) RunDirectCommand(data *CmdCommand) interface{} {
 	if opFunc, opFuncExist := gameSystem.drtFunctionDict[*data.CmdName]; opFuncExist {
 		return opFunc(data.CmdData)
+	}
+	return nil
+}
+
+func (gameSystem *GameSystem) RunRpcCommand(data *LiquidRpc.RpcCmdCommand) interface{} {
+	if opFunc, opFuncExist := gameSystem.functionDict[data.CmdName]; opFuncExist {
+		var CmdData interface{}
+		unmarshalErr := json.Unmarshal(data.CmdData, &CmdData)
+		if unmarshalErr != nil {
+			return nil
+		}
+		return opFunc(data.UserID, &CmdData)
 	}
 	return nil
 }
