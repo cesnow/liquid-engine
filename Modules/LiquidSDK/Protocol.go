@@ -52,14 +52,14 @@ type CmdCommand struct {
 	LiquidToken *string     `json:"liquid_token" bson:"liquid_token"`
 	Platform    *string     `json:"platform" bson:"platform"`
 	CmdId       *string     `json:"cmd_id"`
-	CmdSn       *int        `json:"cmd_sn"`
+	CmdSn       *string     `json:"cmd_sn"`
 	CmdName     *string     `json:"cmd_name"`
 	CmdData     interface{} `json:"cmd_data"`
 }
 
 type CmdCommandResponse struct {
 	CmdData interface{} `json:"cmd_data"`
-	CmdSn   *int        `json:"cmd_sn"`
+	CmdSn   *string     `json:"cmd_sn"`
 }
 
 // Direct Command
