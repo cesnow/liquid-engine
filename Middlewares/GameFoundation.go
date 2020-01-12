@@ -17,13 +17,12 @@ func GetLiquidData() gin.HandlerFunc {
 
 		CodenameLiquidKey := LiquidSDK.GetServer().GetKeyStatic()
 
-		// ginContext.GetRawData()
-		// c.Request.Body.Read(DataBodyBuf)
 		RawDataBody, GetRawBodyErr := c.GetRawData()
 		if GetRawBodyErr != nil {
 			Logger.SysLog.Errorf("[Engine][Middleware] Get Liquid Data Failed, %s", GetRawBodyErr)
 			c.Status(http.StatusBadRequest)
 			c.Abort()
+			return
 		}
 
 		DataBody, decodeBodyErr := base64.StdEncoding.DecodeString(string(RawDataBody))
@@ -31,6 +30,7 @@ func GetLiquidData() gin.HandlerFunc {
 			Logger.SysLog.Errorf("[Engine][Middleware] Decode Liquid Data Failed, %s", decodeBodyErr)
 			c.Status(http.StatusBadRequest)
 			c.Abort()
+			return
 		}
 
 		var StructureLiquidData *LiquidSDK.CmdSignedBody
@@ -39,6 +39,7 @@ func GetLiquidData() gin.HandlerFunc {
 			Logger.SysLog.Errorf("[Engine][Middleware] Unmarshal Liquid Data Failed, %s", DataUnmarshalError)
 			c.Status(http.StatusBadRequest)
 			c.Abort()
+			return
 		}
 
 		DataVerify := hmac.New(sha1.New, []byte(CodenameLiquidKey))
@@ -47,8 +48,10 @@ func GetLiquidData() gin.HandlerFunc {
 
 		if StructureLiquidData.LiSign != DataVerifyHexDigest {
 			Logger.SysLog.Error("[Engine][Middleware] Verify Liquid Data Failed")
+
 			c.Status(http.StatusBadRequest)
 			c.Abort()
+			return
 		}
 
 		DecodedCommandData, DecodedCommandDataError := base64.StdEncoding.DecodeString(StructureLiquidData.LiData)
@@ -56,6 +59,7 @@ func GetLiquidData() gin.HandlerFunc {
 			Logger.SysLog.Errorf("[Engine][Middleware] Decode Command Liquid Data Failed, %s", DecodedCommandDataError)
 			c.Status(http.StatusBadRequest)
 			c.Abort()
+			return
 		}
 
 		//var CommandData map[string]interface{}

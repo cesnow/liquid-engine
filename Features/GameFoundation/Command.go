@@ -13,8 +13,10 @@ import (
 func RouteCommand(c *gin.Context) {
 
 	var command *LiquidSDK.CmdCommand
-	_ = json.Unmarshal(c.MustGet("CommandData").([]byte), &command)
-	Logger.SysLog.Debugf("[CMD][Command] %+v", command)
+	unmarshalErr := json.Unmarshal(c.MustGet("CommandData").([]byte), &command)
+	if unmarshalErr != nil {
+		Logger.SysLog.Warnf("[CMD][Command] Unmarshal Command Data Failed, %s", unmarshalErr)
+	}
 
 	result := &LiquidSDK.CmdCommandResponse{
 		CmdData: nil,
@@ -22,7 +24,9 @@ func RouteCommand(c *gin.Context) {
 	}
 
 	if command.LiquidId == nil || command.LiquidToken == nil {
+		Logger.SysLog.Warnf("[CMD][Command] ID & Token is empty !")
 		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.Abort()
 		return
 	}
 
@@ -36,7 +40,9 @@ func RouteCommand(c *gin.Context) {
 	liquidToken := string(authToken)
 
 	if authTokenErr != nil || liquidToken != *command.LiquidToken {
+		Logger.SysLog.Warnf("[CMD][Command] Data Verify Failed")
 		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.Abort()
 		return
 	}
 
@@ -60,6 +66,7 @@ func RouteCommand(c *gin.Context) {
 		gameFeature := LiquidSDK.GetServer().GetGameFeature(*command.CmdId)
 		if gameFeature == nil {
 			c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+			c.Abort()
 			return
 		}
 		runCommandData := gameFeature.RunCommand(command)
