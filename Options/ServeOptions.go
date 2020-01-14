@@ -1,15 +1,11 @@
 package Options
 
-var DefaultServePort = 8080
-
 type ServeOptions struct {
 	ServePort *int
 }
 
-func LoadServeEnv() *ServeOptions {
-	return &ServeOptions{
-		ServePort: &DefaultServePort,
-	}
+func Serve() *ServeOptions {
+	return &ServeOptions{}
 }
 
 func (leo *ServeOptions) SetHttpPort(p int) *ServeOptions {
@@ -18,7 +14,7 @@ func (leo *ServeOptions) SetHttpPort(p int) *ServeOptions {
 }
 
 func MergeServeOptions(opts ...*ServeOptions) *ServeOptions {
-	uOpts := LoadServeEnv()
+	uOpts := Serve()
 	for _, uo := range opts {
 		if uo == nil {
 			continue
