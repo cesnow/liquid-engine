@@ -39,7 +39,7 @@ func (gameSystem *GameSystem) RunRpcCommand(data *LiquidRpc.RpcCmdCommand) inter
 		if unmarshalErr != nil {
 			return nil
 		}
-		return opFunc(data.UserID, &CmdData)
+		return opFunc(data.UserID, CmdData)
 	}
 	return nil
 }
