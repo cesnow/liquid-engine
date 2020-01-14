@@ -11,6 +11,7 @@ import (
 	"github.com/cesnow/LiquidEngine/Middlewares"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidRpc"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidSDK"
+	"github.com/cesnow/LiquidEngine/Options"
 	"github.com/cesnow/LiquidEngine/Settings"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -93,7 +94,12 @@ func (engine *Engine) GetGin() *gin.Engine {
 	return engine.ginEngine
 }
 
-func (engine *Engine) Serve() {
+func (engine *Engine) Serve(opts ...*Options.ServeOptions) {
+	serveOptions := Options.MergeServeOptions(opts...)
+
+	if serveOptions.ServePort != nil {
+		engine.Config.Gin.HttpPort = *serveOptions.ServePort
+	}
 
 	maxHeaderBytes := 1 << 20
 	endPoint := fmt.Sprintf(":%d", engine.Config.Gin.HttpPort)
