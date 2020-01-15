@@ -56,9 +56,9 @@ func (gameSystem *GameSystem) Register(operator string, f func(string, interface
 	Logger.SysLog.Debugf("[Engine][OperatorRegister] `%s` Registered", operator)
 }
 
-func (gameSystem *GameSystem) RegisterDirect(operator string, f func(interface{}) interface{}) {
+func (gameSystem *GameSystem) RegisterDirect(operator string, f func(string, interface{}) interface{}) {
 	if gameSystem.drtFunctionDict == nil {
-		gameSystem.drtFunctionDict = make(map[string]func(interface{}) interface{})
+		gameSystem.drtFunctionDict = make(map[string]func(string, interface{}) interface{})
 	}
 	gameSystem.drtFunctionDict[operator] = f
 	Logger.SysLog.Debugf("[Engine][OperatorRegisterDirect] `%s` Registered", operator)
