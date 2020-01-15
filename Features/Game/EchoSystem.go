@@ -2,6 +2,7 @@ package Game
 
 import (
 	"github.com/cesnow/LiquidEngine/Modules/LiquidSDK"
+	"github.com/gin-gonic/gin"
 )
 
 type EchoSystem struct {
@@ -17,6 +18,7 @@ func NewEchoSystem() *EchoSystem {
 func (echo *EchoSystem) LoadDefaultOperator() {
 	echo.Register("echo", echo.Echo)
 	echo.Register("ping", echo.Ping)
+	echo.RegisterDirect("direct", echo.Direct)
 }
 
 func (echo *EchoSystem) Echo(LiquidID string, CmdData interface{}) interface{} {
@@ -24,5 +26,9 @@ func (echo *EchoSystem) Echo(LiquidID string, CmdData interface{}) interface{} {
 }
 
 func (echo *EchoSystem) Ping(LiquidID string, CmdData interface{}) interface{} {
-	return "Pong"
+	return gin.H{"result": "pong"}
+}
+
+func (echo *EchoSystem) Direct(LiquidID string, CmdData interface{}) interface{} {
+	return gin.H{"result": "direct"}
 }

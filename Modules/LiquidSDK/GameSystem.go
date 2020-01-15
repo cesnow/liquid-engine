@@ -15,7 +15,7 @@ type IGameSystem interface {
 type GameSystem struct {
 	ILiquidSystem,
 	functionDict map[string]func(string, interface{}) interface{}
-	drtFunctionDict map[string]func(interface{}) interface{}
+	drtFunctionDict map[string]func(string, interface{}) interface{}
 }
 
 func (gameSystem *GameSystem) RunCommand(data *CmdCommand) interface{} {
@@ -27,13 +27,17 @@ func (gameSystem *GameSystem) RunCommand(data *CmdCommand) interface{} {
 
 func (gameSystem *GameSystem) RunDirectCommand(data *CmdCommand) interface{} {
 	if opFunc, opFuncExist := gameSystem.drtFunctionDict[*data.CmdName]; opFuncExist {
-		return opFunc(data.CmdData)
+		return opFunc(*data.LiquidId, data.CmdData)
 	}
 	return nil
 }
 
 func (gameSystem *GameSystem) RunRpcCommand(data *LiquidRpc.RpcCmdCommand) interface{} {
-	if opFunc, opFuncExist := gameSystem.functionDict[data.CmdName]; opFuncExist {
+	searchDic := gameSystem.functionDict
+	if data.Direct {
+		searchDic = gameSystem.drtFunctionDict
+	}
+	if opFunc, opFuncExist := searchDic[data.CmdName]; opFuncExist {
 		var CmdData interface{}
 		unmarshalErr := json.Unmarshal(data.CmdData, &CmdData)
 		if unmarshalErr != nil {
