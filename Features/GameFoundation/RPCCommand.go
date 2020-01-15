@@ -11,8 +11,12 @@ import (
 func GRpcCommand(command *LiquidSDK.CmdCommand, direct bool) ([]byte, error) {
 	c := LiquidSDK.GetServer().GetGameRpcConnection()
 	marshalCmdData, _ := json.Marshal(command.CmdData)
+	UserID := ""
+	if command.LiquidId != nil {
+		UserID = *command.LiquidId
+	}
 	r, err := c.Command(context.Background(), &LiquidRpc.RpcCmdCommand{
-		UserID:   *command.LiquidId,
+		UserID:   UserID,
 		Platform: *command.Platform,
 		CmdId:    *command.CmdId,
 		CmdName:  *command.CmdName,
