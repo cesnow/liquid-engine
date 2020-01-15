@@ -8,7 +8,7 @@ import (
 	"github.com/cesnow/LiquidEngine/Modules/LiquidSDK"
 )
 
-func GRpcCommand(command *LiquidSDK.CmdCommand) ([]byte, error) {
+func GRpcCommand(command *LiquidSDK.CmdCommand, direct bool) ([]byte, error) {
 	c := LiquidSDK.GetServer().GetGameRpcConnection()
 	marshalCmdData, _ := json.Marshal(command.CmdData)
 	r, err := c.Command(context.Background(), &LiquidRpc.RpcCmdCommand{
@@ -17,6 +17,7 @@ func GRpcCommand(command *LiquidSDK.CmdCommand) ([]byte, error) {
 		CmdId:    *command.CmdId,
 		CmdName:  *command.CmdName,
 		CmdData:  marshalCmdData,
+		Direct:   direct,
 	})
 	if err != nil {
 		Logger.SysLog.Warnf("[Engine] Game Rpc Traffic Failed, %+v", err)

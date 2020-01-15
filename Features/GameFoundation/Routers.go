@@ -15,5 +15,6 @@ func Routers(gin *gin.Engine) {
 		GameFoundationRouters.POST("/bind", RouteBind)
 		GameFoundationRouters.POST("/auth", RouteAuth)
 		GameFoundationRouters.POST("/command", RouteCommand)
+		GameFoundationRouters.POST("/direct", RouteDirect)
 	}
 }

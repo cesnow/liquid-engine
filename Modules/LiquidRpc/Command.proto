@@ -13,6 +13,7 @@ message RpcCmdCommand {
     string CmdId = 3;
     string CmdName = 4;
     bytes CmdData = 5;
+    bool Direct = 6;
 }
 
 message RpcCmdCommandReply {
