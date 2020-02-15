@@ -57,7 +57,7 @@ func (server *LiquidServer) InitRpcTraffic(conf *Settings.AppConf) {
 		return
 	}
 	Logger.SysLog.Infof("[Engine] RPC Enabled, Wait For Game RPC Ready ...")
-	rpcClient, err := GameRpcConnection(conf.RpcRemoteIp)
+	rpcClient, err := GameRpcConnection(fmt.Sprintf("%s:%d", conf.RpcEndpoint, conf.RpcBindPort))
 	if err == nil {
 		server.gameRpcConnection = rpcClient
 		server.enableRpcTraffic = true

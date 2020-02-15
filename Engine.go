@@ -157,7 +157,7 @@ func (engine *Engine) RpcModeServe() {
 	var gRpcServer *grpc.Server
 	go func() {
 		serveTime := time.Now()
-		apiListener, err := net.Listen("tcp", ":9999")
+		apiListener, err := net.Listen("tcp", fmt.Sprintf(":%d", engine.Config.App.RpcBindPort))
 		if err != nil {
 			Logger.SysLog.Warnf("[Engine] gRPC Mode Serve Failed (%s)", err)
 			return
@@ -166,7 +166,10 @@ func (engine *Engine) RpcModeServe() {
 		gRpcServer = grpc.NewServer(grpc.KeepaliveEnforcementPolicy(keepAliveEP), grpc.KeepaliveParams(keepAliveSP))
 		LiquidRpc.RegisterGameAdapterServer(gRpcServer, es)
 		reflection.Register(gRpcServer)
-		Logger.SysLog.Infof("[Engine] Serving gRpc(:9999) in %dms", serveTime.Sub(engine.StartTime).Milliseconds())
+		Logger.SysLog.Infof("[Engine] Serving gRpc(:%d) in %dms",
+			engine.Config.App.RpcBindPort,
+			serveTime.Sub(engine.StartTime).Milliseconds(),
+		)
 		if err := gRpcServer.Serve(apiListener); err != nil {
 			Logger.SysLog.Warnf("[Engine] gRPC Mode Serve Failed (%s)", err)
 			return
