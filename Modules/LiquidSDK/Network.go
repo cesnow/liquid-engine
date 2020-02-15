@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func GameRpcConnection() (LiquidRpc.GameAdapterClient, error) {
+func GameRpcConnection(remoteIp string) (LiquidRpc.GameAdapterClient, error) {
 
 	keepAlive := keepalive.ClientParameters{
 		Time:                10 * time.Second,
@@ -16,7 +16,7 @@ func GameRpcConnection() (LiquidRpc.GameAdapterClient, error) {
 	}
 
 	conn, err := grpc.Dial(
-		"0.0.0.0:9999",
+		remoteIp,
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 		grpc.WithKeepaliveParams(keepAlive),
