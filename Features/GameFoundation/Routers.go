@@ -7,6 +7,8 @@ import (
 
 func Routers(gin *gin.Engine) {
 	GameFoundationRouters := gin.Group("@")
+	GameFoundationRouters.GET("/api/:CmdId/:CmdName", RouteApis)
+	GameFoundationRouters.POST("/api/:CmdId/:CmdName", RouteApis)
 	GameFoundationRouters.Use(Middlewares.GetLiquidData())
 	{
 		GameFoundationRouters.POST("/register", RouteRegister)
