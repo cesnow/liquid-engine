@@ -3,6 +3,7 @@ package LiquidSDK
 import (
 	"github.com/cesnow/LiquidEngine/Modules/LiquidRpc"
 	"google.golang.org/grpc"
+	_ "google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/keepalive"
 	"time"
 )
@@ -20,6 +21,7 @@ func GameRpcConnection(remoteIp string) (LiquidRpc.GameAdapterClient, error) {
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 		grpc.WithKeepaliveParams(keepAlive),
+		grpc.WithDefaultCallOptions(grpc.UseCompressor("gzip")),
 	)
 	if err != nil {
 		return nil, err
