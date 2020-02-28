@@ -8,7 +8,7 @@ func Routers(gin *gin.Engine) {
 	HealthRouters := gin.Group("/health")
 	HealthRouters.Use()
 	{
-		HealthRouters.GET("/readiness")
-		HealthRouters.GET("/ping")
+		HealthRouters.GET("/readiness", HealthReadiness)
+		HealthRouters.GET("/ping", HealthPing)
 	}
 }

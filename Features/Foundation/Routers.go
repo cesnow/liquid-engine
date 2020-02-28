@@ -5,5 +5,6 @@ import (
 )
 
 func Routers(gin *gin.Engine) {
+	gin.GET("/", Root)
 	gin.GET("/@", RootKey)
 }

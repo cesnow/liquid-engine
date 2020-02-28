@@ -9,3 +9,7 @@ import (
 func RootKey(ginContext *gin.Context) {
 	ginContext.String(http.StatusOK, LiquidSDK.GetServer().GetKey())
 }
+
+func Root(ginContext *gin.Context) {
+	ginContext.String(http.StatusOK, "")
+}
