@@ -9,7 +9,7 @@ import (
 type IGameSystem interface {
 	RunCommand(*CmdCommand) interface{}
 	RunDirectCommand(*CmdCommand) interface{}
-	RunRpcCommand(*LiquidRpc.RpcCmdCommand) interface{}
+	RunRpcCommand(cmd *LiquidRpc.ReqCmd) interface{}
 }
 
 type GameSystem struct {
@@ -32,7 +32,7 @@ func (gameSystem *GameSystem) RunDirectCommand(data *CmdCommand) interface{} {
 	return nil
 }
 
-func (gameSystem *GameSystem) RunRpcCommand(data *LiquidRpc.RpcCmdCommand) interface{} {
+func (gameSystem *GameSystem) RunRpcCommand(data *LiquidRpc.ReqCmd) interface{} {
 	searchDic := gameSystem.functionDict
 	if data.Direct {
 		searchDic = gameSystem.drtFunctionDict

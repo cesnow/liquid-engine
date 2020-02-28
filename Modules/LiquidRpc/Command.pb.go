@@ -24,7 +24,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type RpcCmdCommand struct {
+type ReqCmd struct {
 	UserID               string   `protobuf:"bytes,1,opt,name=UserID,proto3" json:"UserID,omitempty"`
 	Platform             string   `protobuf:"bytes,2,opt,name=Platform,proto3" json:"Platform,omitempty"`
 	CmdId                string   `protobuf:"bytes,3,opt,name=CmdId,proto3" json:"CmdId,omitempty"`
@@ -36,106 +36,106 @@ type RpcCmdCommand struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *RpcCmdCommand) Reset()         { *m = RpcCmdCommand{} }
-func (m *RpcCmdCommand) String() string { return proto.CompactTextString(m) }
-func (*RpcCmdCommand) ProtoMessage()    {}
-func (*RpcCmdCommand) Descriptor() ([]byte, []int) {
+func (m *ReqCmd) Reset()         { *m = ReqCmd{} }
+func (m *ReqCmd) String() string { return proto.CompactTextString(m) }
+func (*ReqCmd) ProtoMessage()    {}
+func (*ReqCmd) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8272e154246f9d3c, []int{0}
 }
 
-func (m *RpcCmdCommand) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RpcCmdCommand.Unmarshal(m, b)
+func (m *ReqCmd) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReqCmd.Unmarshal(m, b)
 }
-func (m *RpcCmdCommand) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RpcCmdCommand.Marshal(b, m, deterministic)
+func (m *ReqCmd) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReqCmd.Marshal(b, m, deterministic)
 }
-func (m *RpcCmdCommand) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RpcCmdCommand.Merge(m, src)
+func (m *ReqCmd) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReqCmd.Merge(m, src)
 }
-func (m *RpcCmdCommand) XXX_Size() int {
-	return xxx_messageInfo_RpcCmdCommand.Size(m)
+func (m *ReqCmd) XXX_Size() int {
+	return xxx_messageInfo_ReqCmd.Size(m)
 }
-func (m *RpcCmdCommand) XXX_DiscardUnknown() {
-	xxx_messageInfo_RpcCmdCommand.DiscardUnknown(m)
+func (m *ReqCmd) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReqCmd.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_RpcCmdCommand proto.InternalMessageInfo
+var xxx_messageInfo_ReqCmd proto.InternalMessageInfo
 
-func (m *RpcCmdCommand) GetUserID() string {
+func (m *ReqCmd) GetUserID() string {
 	if m != nil {
 		return m.UserID
 	}
 	return ""
 }
 
-func (m *RpcCmdCommand) GetPlatform() string {
+func (m *ReqCmd) GetPlatform() string {
 	if m != nil {
 		return m.Platform
 	}
 	return ""
 }
 
-func (m *RpcCmdCommand) GetCmdId() string {
+func (m *ReqCmd) GetCmdId() string {
 	if m != nil {
 		return m.CmdId
 	}
 	return ""
 }
 
-func (m *RpcCmdCommand) GetCmdName() string {
+func (m *ReqCmd) GetCmdName() string {
 	if m != nil {
 		return m.CmdName
 	}
 	return ""
 }
 
-func (m *RpcCmdCommand) GetCmdData() []byte {
+func (m *ReqCmd) GetCmdData() []byte {
 	if m != nil {
 		return m.CmdData
 	}
 	return nil
 }
 
-func (m *RpcCmdCommand) GetDirect() bool {
+func (m *ReqCmd) GetDirect() bool {
 	if m != nil {
 		return m.Direct
 	}
 	return false
 }
 
-type RpcCmdCommandReply struct {
+type RespCmd struct {
 	CmdData              []byte   `protobuf:"bytes,1,opt,name=CmdData,proto3" json:"CmdData,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *RpcCmdCommandReply) Reset()         { *m = RpcCmdCommandReply{} }
-func (m *RpcCmdCommandReply) String() string { return proto.CompactTextString(m) }
-func (*RpcCmdCommandReply) ProtoMessage()    {}
-func (*RpcCmdCommandReply) Descriptor() ([]byte, []int) {
+func (m *RespCmd) Reset()         { *m = RespCmd{} }
+func (m *RespCmd) String() string { return proto.CompactTextString(m) }
+func (*RespCmd) ProtoMessage()    {}
+func (*RespCmd) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8272e154246f9d3c, []int{1}
 }
 
-func (m *RpcCmdCommandReply) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RpcCmdCommandReply.Unmarshal(m, b)
+func (m *RespCmd) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RespCmd.Unmarshal(m, b)
 }
-func (m *RpcCmdCommandReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RpcCmdCommandReply.Marshal(b, m, deterministic)
+func (m *RespCmd) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RespCmd.Marshal(b, m, deterministic)
 }
-func (m *RpcCmdCommandReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RpcCmdCommandReply.Merge(m, src)
+func (m *RespCmd) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RespCmd.Merge(m, src)
 }
-func (m *RpcCmdCommandReply) XXX_Size() int {
-	return xxx_messageInfo_RpcCmdCommandReply.Size(m)
+func (m *RespCmd) XXX_Size() int {
+	return xxx_messageInfo_RespCmd.Size(m)
 }
-func (m *RpcCmdCommandReply) XXX_DiscardUnknown() {
-	xxx_messageInfo_RpcCmdCommandReply.DiscardUnknown(m)
+func (m *RespCmd) XXX_DiscardUnknown() {
+	xxx_messageInfo_RespCmd.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_RpcCmdCommandReply proto.InternalMessageInfo
+var xxx_messageInfo_RespCmd proto.InternalMessageInfo
 
-func (m *RpcCmdCommandReply) GetCmdData() []byte {
+func (m *RespCmd) GetCmdData() []byte {
 	if m != nil {
 		return m.CmdData
 	}
@@ -143,106 +143,140 @@ func (m *RpcCmdCommandReply) GetCmdData() []byte {
 }
 
 func init() {
-	proto.RegisterType((*RpcCmdCommand)(nil), "LiquidRpc.RpcCmdCommand")
-	proto.RegisterType((*RpcCmdCommandReply)(nil), "LiquidRpc.RpcCmdCommandReply")
+	proto.RegisterType((*ReqCmd)(nil), "LiquidRpc.ReqCmd")
+	proto.RegisterType((*RespCmd)(nil), "LiquidRpc.RespCmd")
 }
 
-func init() { proto.RegisterFile("Command.proto", fileDescriptor_8272e154246f9d3c) }
+func init() {
+	proto.RegisterFile("Command.proto", fileDescriptor_8272e154246f9d3c)
+}
 
 var fileDescriptor_8272e154246f9d3c = []byte{
 	// 221 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x90, 0xc1, 0x4a, 0xc4, 0x30,
-	0x14, 0x45, 0x8d, 0x3a, 0x9d, 0x99, 0xa7, 0xb3, 0x09, 0x22, 0x8f, 0x01, 0xa1, 0x74, 0xd5, 0x55,
-	0x16, 0xfa, 0x05, 0x92, 0x80, 0x14, 0x44, 0x24, 0xe2, 0x07, 0xc4, 0x26, 0x42, 0xa1, 0xcf, 0xc4,
-	0x18, 0x17, 0x7e, 0x90, 0xff, 0x29, 0xc6, 0xb4, 0xd8, 0xc5, 0x2c, 0x4f, 0x4e, 0xb8, 0x37, 0x37,
-	0xb0, 0x93, 0x9e, 0xc8, 0xbc, 0x59, 0x11, 0xa2, 0x4f, 0x9e, 0x6f, 0xef, 0x87, 0xf7, 0xcf, 0xc1,
-	0xea, 0xd0, 0x37, 0xdf, 0x0c, 0x76, 0x3a, 0xf4, 0x92, 0x6c, 0xb9, 0xc2, 0x2f, 0xa1, 0x7a, 0xfe,
-	0x70, 0xb1, 0x53, 0xc8, 0x6a, 0xd6, 0x6e, 0x75, 0x21, 0xbe, 0x87, 0xcd, 0xe3, 0x68, 0xd2, 0xab,
-	0x8f, 0x84, 0xc7, 0xd9, 0xcc, 0xcc, 0x2f, 0x60, 0x25, 0xc9, 0x76, 0x16, 0x4f, 0xb2, 0xf8, 0x03,
-	0x8e, 0xb0, 0x96, 0x64, 0x1f, 0x0c, 0x39, 0x3c, 0xcd, 0xe7, 0x13, 0x16, 0xa3, 0x4c, 0x32, 0xb8,
-	0xaa, 0x59, 0x7b, 0xae, 0x27, 0xfc, 0x6d, 0x57, 0x43, 0x74, 0x7d, 0xc2, 0xaa, 0x66, 0xed, 0x46,
-	0x17, 0x6a, 0x04, 0xf0, 0xc5, 0x33, 0xb5, 0x0b, 0xe3, 0xd7, 0xff, 0x1c, 0xb6, 0xc8, 0xb9, 0x7e,
-	0x82, 0xb3, 0x3b, 0x43, 0xee, 0xd6, 0x9a, 0x90, 0x5c, 0xe4, 0x0a, 0xd6, 0xd3, 0x3e, 0x14, 0xf3,
-	0x7a, 0xb1, 0x88, 0xdc, 0x5f, 0x1d, 0x32, 0xb9, 0xac, 0x39, 0x7a, 0xa9, 0xf2, 0xf7, 0xdd, 0xfc,
-	0x04, 0x00, 0x00, 0xff, 0xff, 0xd2, 0xbe, 0x81, 0x3d, 0x4f, 0x01, 0x00, 0x00,
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x90, 0x41, 0x4b, 0x03, 0x31,
+	0x10, 0x85, 0x1d, 0xb5, 0xd9, 0x76, 0xd4, 0x83, 0x83, 0x48, 0xe8, 0x69, 0x59, 0x2f, 0x39, 0x2d,
+	0xa2, 0xe0, 0x5d, 0xb2, 0x22, 0x05, 0x11, 0x09, 0xf8, 0x03, 0x62, 0x13, 0x61, 0xc1, 0x31, 0x69,
+	0x1a, 0xff, 0x8e, 0xbf, 0x55, 0x9a, 0xa6, 0xc5, 0x1e, 0xbf, 0xf7, 0x78, 0x33, 0xf3, 0x06, 0x2f,
+	0x74, 0x60, 0xb6, 0xdf, 0xae, 0x8f, 0x29, 0xe4, 0x40, 0xb3, 0x97, 0x71, 0xf5, 0x33, 0x3a, 0x13,
+	0x97, 0xdd, 0x2f, 0xa0, 0x30, 0x7e, 0xa5, 0xd9, 0xd1, 0x35, 0x8a, 0xf7, 0xb5, 0x4f, 0x8b, 0x41,
+	0x42, 0x0b, 0x6a, 0x66, 0x2a, 0xd1, 0x1c, 0xa7, 0x6f, 0x5f, 0x36, 0x7f, 0x86, 0xc4, 0xf2, 0xb8,
+	0x38, 0x7b, 0xa6, 0x2b, 0x9c, 0x68, 0x76, 0x0b, 0x27, 0x4f, 0x8a, 0xb1, 0x05, 0x92, 0xd8, 0x68,
+	0x76, 0xaf, 0x96, 0xbd, 0x3c, 0x2d, 0xfa, 0x0e, 0xab, 0x33, 0xd8, 0x6c, 0xe5, 0xa4, 0x05, 0x75,
+	0x6e, 0x76, 0xb8, 0xd9, 0x3e, 0x8c, 0xc9, 0x2f, 0xb3, 0x14, 0x2d, 0xa8, 0xa9, 0xa9, 0xd4, 0xdd,
+	0x60, 0x63, 0xfc, 0x3a, 0x6e, 0x0e, 0xfc, 0x17, 0x86, 0x83, 0xf0, 0xdd, 0x13, 0x9e, 0x3d, 0x5b,
+	0xf6, 0x8f, 0xce, 0xc6, 0xec, 0x13, 0x3d, 0x60, 0x53, 0x0b, 0xd3, 0x65, 0xbf, 0xef, 0xda, 0x6f,
+	0x7b, 0xce, 0xe9, 0x40, 0x2a, 0xa3, 0xbb, 0x23, 0x05, 0xb7, 0xf0, 0x21, 0xca, 0x7b, 0xee, 0xff,
+	0x02, 0x00, 0x00, 0xff, 0xff, 0x7a, 0x60, 0x23, 0xc0, 0x2f, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc.ClientConn
+var _ grpc.ClientConnInterface
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
+const _ = grpc.SupportPackageIsVersion6
 
 // GameAdapterClient is the client API for GameAdapter service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type GameAdapterClient interface {
-	Command(ctx context.Context, in *RpcCmdCommand, opts ...grpc.CallOption) (*RpcCmdCommandReply, error)
+	Command(ctx context.Context, opts ...grpc.CallOption) (GameAdapter_CommandClient, error)
 }
 
 type gameAdapterClient struct {
-	cc *grpc.ClientConn
+	cc grpc.ClientConnInterface
 }
 
-func NewGameAdapterClient(cc *grpc.ClientConn) GameAdapterClient {
+func NewGameAdapterClient(cc grpc.ClientConnInterface) GameAdapterClient {
 	return &gameAdapterClient{cc}
 }
 
-func (c *gameAdapterClient) Command(ctx context.Context, in *RpcCmdCommand, opts ...grpc.CallOption) (*RpcCmdCommandReply, error) {
-	out := new(RpcCmdCommandReply)
-	err := c.cc.Invoke(ctx, "/LiquidRpc.GameAdapter/Command", in, out, opts...)
+func (c *gameAdapterClient) Command(ctx context.Context, opts ...grpc.CallOption) (GameAdapter_CommandClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_GameAdapter_serviceDesc.Streams[0], "/LiquidRpc.GameAdapter/Command", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &gameAdapterCommandClient{stream}
+	return x, nil
+}
+
+type GameAdapter_CommandClient interface {
+	Send(*ReqCmd) error
+	Recv() (*RespCmd, error)
+	grpc.ClientStream
+}
+
+type gameAdapterCommandClient struct {
+	grpc.ClientStream
+}
+
+func (x *gameAdapterCommandClient) Send(m *ReqCmd) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *gameAdapterCommandClient) Recv() (*RespCmd, error) {
+	m := new(RespCmd)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // GameAdapterServer is the server API for GameAdapter service.
 type GameAdapterServer interface {
-	Command(context.Context, *RpcCmdCommand) (*RpcCmdCommandReply, error)
+	Command(GameAdapter_CommandServer) error
 }
 
 // UnimplementedGameAdapterServer can be embedded to have forward compatible implementations.
 type UnimplementedGameAdapterServer struct {
 }
 
-func (*UnimplementedGameAdapterServer) Command(ctx context.Context, req *RpcCmdCommand) (*RpcCmdCommandReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Command not implemented")
+func (*UnimplementedGameAdapterServer) Command(srv GameAdapter_CommandServer) error {
+	return status.Errorf(codes.Unimplemented, "method Command not implemented")
 }
 
 func RegisterGameAdapterServer(s *grpc.Server, srv GameAdapterServer) {
 	s.RegisterService(&_GameAdapter_serviceDesc, srv)
 }
 
-func _GameAdapter_Command_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RpcCmdCommand)
-	if err := dec(in); err != nil {
+func _GameAdapter_Command_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GameAdapterServer).Command(&gameAdapterCommandServer{stream})
+}
+
+type GameAdapter_CommandServer interface {
+	Send(*RespCmd) error
+	Recv() (*ReqCmd, error)
+	grpc.ServerStream
+}
+
+type gameAdapterCommandServer struct {
+	grpc.ServerStream
+}
+
+func (x *gameAdapterCommandServer) Send(m *RespCmd) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *gameAdapterCommandServer) Recv() (*ReqCmd, error) {
+	m := new(ReqCmd)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(GameAdapterServer).Command(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/LiquidRpc.GameAdapter/Command",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GameAdapterServer).Command(ctx, req.(*RpcCmdCommand))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 var _GameAdapter_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "LiquidRpc.GameAdapter",
 	HandlerType: (*GameAdapterServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "Command",
-			Handler:    _GameAdapter_Command_Handler,
+			StreamName:    "Command",
+			Handler:       _GameAdapter_Command_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "Command.proto",
 }

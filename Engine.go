@@ -162,9 +162,8 @@ func (engine *Engine) RpcModeServe() {
 			Logger.SysLog.Warnf("[Engine] gRPC Mode Serve Failed (%s)", err)
 			return
 		}
-		es := &LiquidSDK.RpcCmdCommand{}
 		gRpcServer = grpc.NewServer(grpc.KeepaliveEnforcementPolicy(keepAliveEP), grpc.KeepaliveParams(keepAliveSP))
-		LiquidRpc.RegisterGameAdapterServer(gRpcServer, es)
+		LiquidRpc.RegisterGameAdapterServer(gRpcServer, &LiquidSDK.RpcFeature{})
 		reflection.Register(gRpcServer)
 		Logger.SysLog.Infof("[Engine] Serving gRpc(:%d) in %dms",
 			engine.Config.App.RpcBindPort,
