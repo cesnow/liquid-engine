@@ -21,14 +21,14 @@ func (echo *EchoSystem) LoadDefaultOperator() {
 	echo.RegisterDirect("direct", echo.Direct)
 }
 
-func (echo *EchoSystem) Echo(LiquidID string, CmdData interface{}) interface{} {
+func (echo *EchoSystem) Echo(LiquidID string, CmdData LiquidSDK.IGameRequest) interface{} {
 	return CmdData
 }
 
-func (echo *EchoSystem) Ping(LiquidID string, CmdData interface{}) interface{} {
+func (echo *EchoSystem) Ping(LiquidID string, CmdData LiquidSDK.IGameRequest) interface{} {
 	return gin.H{"result": "pong"}
 }
 
-func (echo *EchoSystem) Direct(LiquidID string, CmdData interface{}) interface{} {
+func (echo *EchoSystem) Direct(LiquidID string, CmdData LiquidSDK.IGameRequest) interface{} {
 	return gin.H{"result": "direct"}
 }
