@@ -21,7 +21,11 @@ func GameRpcConnection(remoteIp string) (LiquidRpc.GameAdapterClient, error) {
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 		grpc.WithKeepaliveParams(keepAlive),
-		grpc.WithDefaultCallOptions(grpc.UseCompressor("gzip")),
+		grpc.WithDefaultCallOptions(
+			grpc.UseCompressor("gzip"),
+			grpc.MaxCallSendMsgSize(20*1024*1024),
+			grpc.MaxCallRecvMsgSize(20*1024*1024),
+		),
 	)
 	if err != nil {
 		return nil, err
