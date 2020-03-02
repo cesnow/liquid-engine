@@ -18,6 +18,7 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"
 	"google.golang.org/grpc"
+	_ "google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
 	"net"
@@ -163,10 +164,12 @@ func (engine *Engine) RpcModeServe() {
 			return
 		}
 		gRpcServer = grpc.NewServer(
+			grpc.InitialWindowSize(64*1024*2),
+			grpc.InitialConnWindowSize(64*1024*2),
 			grpc.KeepaliveEnforcementPolicy(keepAliveEP),
 			grpc.KeepaliveParams(keepAliveSP),
-			grpc.MaxRecvMsgSize(20*1024*1024),
-			grpc.MaxSendMsgSize(20*1024*1024),
+			grpc.MaxRecvMsgSize(50*1024*1024),
+			grpc.MaxSendMsgSize(50*1024*1024),
 		)
 		LiquidRpc.RegisterGameAdapterServer(gRpcServer, &LiquidSDK.RpcFeature{})
 		reflection.Register(gRpcServer)

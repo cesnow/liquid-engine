@@ -12,7 +12,7 @@ func GameRpcConnection(remoteIp string) (LiquidRpc.GameAdapterClient, error) {
 
 	keepAlive := keepalive.ClientParameters{
 		Time:                10 * time.Second,
-		Timeout:             2 * time.Second,
+		Timeout:             3 * time.Second,
 		PermitWithoutStream: true,
 	}
 
@@ -23,8 +23,8 @@ func GameRpcConnection(remoteIp string) (LiquidRpc.GameAdapterClient, error) {
 		grpc.WithKeepaliveParams(keepAlive),
 		grpc.WithDefaultCallOptions(
 			grpc.UseCompressor("gzip"),
-			grpc.MaxCallSendMsgSize(20*1024*1024),
-			grpc.MaxCallRecvMsgSize(20*1024*1024),
+			grpc.MaxCallSendMsgSize(50*1024*1024),
+			grpc.MaxCallRecvMsgSize(50*1024*1024),
 		),
 	)
 	if err != nil {
