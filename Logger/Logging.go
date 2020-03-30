@@ -34,7 +34,6 @@ func getLoggerSync(service string) zapcore.WriteSyncer {
 	if runtime.GOOS == "linux" {
 		logRoot = "/var/log"
 	} else {
-		ws = append(ws, zapcore.AddSync(os.Stdout))
 		logRoot = "./log"
 	}
 	lumberJackLogger := &lumberjack.Logger{
@@ -45,5 +44,6 @@ func getLoggerSync(service string) zapcore.WriteSyncer {
 		Compress:   true,
 	}
 	ws = append(ws, zapcore.AddSync(lumberJackLogger))
+	ws = append(ws, zapcore.AddSync(os.Stdout))
 	return zapcore.NewMultiWriteSyncer(ws...)
 }
