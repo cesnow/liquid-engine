@@ -49,12 +49,9 @@ func (gameSystem *GameSystem) RunRpcCommand(data *LiquidRpc.ReqCmd) interface{} 
 		searchDic = gameSystem.drtFunctionDict
 	}
 	if opFunc, opFuncExist := searchDic[data.CmdName]; opFuncExist {
-		var UnmarshalCmdData interface{}
-		unmarshalErr := json.Unmarshal(data.CmdData, &UnmarshalCmdData)
-		if unmarshalErr != nil {
-			return nil
-		}
-		return opFunc(data.UserID, &GameRequest{CmdData: UnmarshalCmdData})
+		Req := &GameRequest{CmdData: nil}
+		_ = json.Unmarshal(data.CmdData, &Req.CmdData)
+		return opFunc(data.UserID, Req)
 	} else {
 		if httpFunc, httpFuncExist := gameSystem.httpFunctionDict[data.CmdName]; httpFuncExist {
 			return httpFunc(&GameRequest{CmdData: data.CmdData})
