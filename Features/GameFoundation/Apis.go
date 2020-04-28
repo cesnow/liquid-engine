@@ -22,7 +22,7 @@ func RouteApis(c *gin.Context) {
 		CmdId:       &cmdId,
 		CmdSn:       nil,
 		CmdName:     &cmdName,
-		CmdData:     rawBody,
+		CmdData:     string(rawBody),
 	}
 
 	// gRpc Routing Mode Checking
