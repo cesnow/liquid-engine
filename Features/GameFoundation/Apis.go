@@ -9,6 +9,10 @@ import (
 	"net/http"
 )
 
+type FakeCmdData struct {
+	R string `json:"r,omitempty"`
+}
+
 func RouteApis(c *gin.Context) {
 
 	cmdId := c.Param("CmdId")
@@ -22,7 +26,7 @@ func RouteApis(c *gin.Context) {
 		CmdId:       &cmdId,
 		CmdSn:       nil,
 		CmdName:     &cmdName,
-		CmdData:     string(rawBody),
+		CmdData:     &FakeCmdData{R: string(rawBody)},
 	}
 
 	// gRpc Routing Mode Checking
