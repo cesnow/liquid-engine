@@ -13,7 +13,10 @@ func NewLineMemberSystem() LiquidSDK.IMemberSystem {
 	return lineMember
 }
 
-func (fb *LineMemberSystem) Validate(fromId, fromToken string) (valid bool, msg string, overrideFromId string) {
+func (fb *LineMemberSystem) Validate(
+	fromId, fromToken, platform string,
+	args interface{},
+) (valid bool, msg string, overrideFromId string) {
 	Logger.SysLog.Infof("[Member|Validate|Line] FromId: %s, FromToken: %s", fromId, fromToken)
 	valid = false
 	msg = ""

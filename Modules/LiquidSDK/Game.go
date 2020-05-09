@@ -52,10 +52,17 @@ func (e *RpcFeature) Login(ctx context.Context, req *LiquidRpc.ReqLogin) (resp *
 		Logger.SysLog.Warnf("[RPC|Recv|Login] Member system not found `%s`", req.FromType)
 		return validResp, nil
 	}
-	resultValidate, resultMsg, resultOverrideFromId := member.Validate(req.FromId, req.FromToken)
+	var extraArgs interface{}
+	_ = json.Unmarshal(req.ExtraArgs, &extraArgs)
+	resultValidate, resultMsg, resultOverrideFromId := member.Validate(
+		req.FromId,
+		req.FromToken,
+		req.Platform,
+		extraArgs,
+	)
 	return &LiquidRpc.RespLogin{
-		Valid: resultValidate,
-		Msg: resultMsg,
+		Valid:          resultValidate,
+		Msg:            resultMsg,
 		OverrideFromId: resultOverrideFromId,
 	}, nil
 }

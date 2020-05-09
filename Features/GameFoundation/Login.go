@@ -62,7 +62,12 @@ func RouteLogin(c *gin.Context) {
 				errorMessage = "member system is not defined : " + command.FromToken
 			} else {
 				overrideFromId := ""
-				resultValidate, errorMessage, overrideFromId = member.Validate(command.FromId, command.FromToken)
+				resultValidate, errorMessage, overrideFromId = member.Validate(
+					command.FromId,
+					command.FromToken,
+					command.Platform,
+					command.ExtraArgs,
+				)
 				if overrideFromId != "" {
 					command.FromId = overrideFromId
 				}
