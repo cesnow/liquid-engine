@@ -30,9 +30,29 @@ func GRpcCommand(command *LiquidSDK.CmdCommand, direct bool) ([]byte, error) {
 	})
 
 	if err != nil {
-		Logger.SysLog.Warnf("[Engine] Game Rpc Traffic Failed, %+v", err)
+		Logger.SysLog.Warnf("[RPC|Engine] Game Traffic Failed, %+v", err)
 		return nil, err
 	}
 	return r.CmdData, nil
+
+}
+
+func GRpcLogin(command *LiquidSDK.CmdAccount) (*LiquidRpc.RespLogin, error) {
+	c := LiquidSDK.GetServer().GetGameRpcConnection()
+
+	marshalExtraArgs, _ := json.Marshal(command.ExtraArgs)
+	r, err := c.Login(context.Background(), &LiquidRpc.ReqLogin{
+		FromType:  command.FromType,
+		FromId:    command.FromId,
+		FromToken: command.FromToken,
+		Platform:  command.Platform,
+		ExtraArgs: marshalExtraArgs,
+	})
+
+	if err != nil {
+		Logger.SysLog.Warnf("[RPC|Engine] Login Traffic Failed, %+v", err)
+		return nil, err
+	}
+	return r, nil
 
 }

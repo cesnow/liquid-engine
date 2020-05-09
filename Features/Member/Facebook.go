@@ -6,7 +6,6 @@ import (
 )
 
 type FacebookMemberSystem struct {
-
 }
 
 func NewFacebookMemberSystem() LiquidSDK.IMemberSystem {
@@ -14,7 +13,10 @@ func NewFacebookMemberSystem() LiquidSDK.IMemberSystem {
 	return fbMember
 }
 
-func (fb *FacebookMemberSystem) Validate(fromId, fromToken string) bool {
+func (fb *FacebookMemberSystem) Validate(fromId, fromToken string) (valid bool, msg string, overrideFromId string) {
 	Logger.SysLog.Infof("[Member|Validate|Facebook] FromId: %s, FromToken: %s", fromId, fromToken)
-	return false
+	valid = false
+	msg = ""
+	overrideFromId = ""
+	return
 }

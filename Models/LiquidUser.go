@@ -16,6 +16,7 @@ type LiquidUser struct {
 	Update     time.Time `json:"update" bson:"update"`
 	FromType   string    `json:"from_type" bson:"from_type"`
 	FromId     string    `json:"from_id" bson:"from_id"`
+	FromToken  string    `json:"from_token" bson:"from_token"`
 }
 
 func FindLiquidGuestUser(autoId string) *LiquidUser {

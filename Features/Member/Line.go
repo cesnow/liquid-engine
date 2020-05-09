@@ -6,7 +6,6 @@ import (
 )
 
 type LineMemberSystem struct {
-
 }
 
 func NewLineMemberSystem() LiquidSDK.IMemberSystem {
@@ -14,7 +13,10 @@ func NewLineMemberSystem() LiquidSDK.IMemberSystem {
 	return lineMember
 }
 
-func (fb *LineMemberSystem) Validate(fromId, fromToken string) bool {
+func (fb *LineMemberSystem) Validate(fromId, fromToken string) (valid bool, msg string, overrideFromId string) {
 	Logger.SysLog.Infof("[Member|Validate|Line] FromId: %s, FromToken: %s", fromId, fromToken)
-	return false
+	valid = false
+	msg = ""
+	overrideFromId = ""
+	return
 }

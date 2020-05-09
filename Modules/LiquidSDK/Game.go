@@ -39,3 +39,23 @@ func (e *RpcFeature) Command(ctx context.Context, req *LiquidRpc.ReqCmd) (resp *
 		CmdData: marshalCommandData,
 	}, nil
 }
+
+func (e *RpcFeature) Login(ctx context.Context, req *LiquidRpc.ReqLogin) (resp *LiquidRpc.RespLogin, err error) {
+	Logger.SysLog.Infof("[RPC|Recv|Login] From: %s, Id: %s, Token: %s",
+		req.FromType,
+		req.FromId,
+		req.FromToken,
+	)
+	validResp := &LiquidRpc.RespLogin{Valid: false, Msg: "", OverrideFromId: ""}
+	member := GetServer().GetMemberSystem(req.FromType)
+	if member == nil {
+		Logger.SysLog.Warnf("[RPC|Recv|Login] Member system not found `%s`", req.FromType)
+		return validResp, nil
+	}
+	resultValidate, resultMsg, resultOverrideFromId := member.Validate(req.FromId, req.FromToken)
+	return &LiquidRpc.RespLogin{
+		Valid: resultValidate,
+		Msg: resultMsg,
+		OverrideFromId: resultOverrideFromId,
+	}, nil
+}

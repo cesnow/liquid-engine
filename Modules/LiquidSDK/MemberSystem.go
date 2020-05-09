@@ -1,7 +1,7 @@
 package LiquidSDK
 
 type IMemberSystem interface {
-	Validate(fromId, fromToken string) bool
+	Validate(fromId, fromToken string) (valid bool, msg string, overrideFromId string)
 }
 
 func (server *LiquidServer) RegisterMember(memberType string, MemberInstance IMemberSystem) bool {

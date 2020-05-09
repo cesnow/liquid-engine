@@ -7,18 +7,8 @@ import (
 	"github.com/cesnow/LiquidEngine/Models"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidSDK"
 	"github.com/gin-gonic/gin"
-	"github.com/mitchellh/mapstructure"
 	"net/http"
 )
-
-func s(source interface{}) interface{} {
-	var result interface{}
-	config := &mapstructure.DecoderConfig{TagName: "json"}
-	config.Result = &result
-	decoder, _ := mapstructure.NewDecoder(config)
-	_ = decoder.Decode(&source)
-	return result
-}
 
 func RouteLogin(c *gin.Context) {
 
@@ -52,20 +42,35 @@ func RouteLogin(c *gin.Context) {
 			return
 		}
 
-		// Get Third Party Member System
-		member := LiquidSDK.GetServer().GetMemberSystem(command.FromType)
-		if member == nil {
-			c.String(http.StatusOK, Middlewares.GetLiquidResult(gin.H{
-				"data": "member system is not defined : " + command.FromToken,
-			}))
-			return
+		// Run Validation, Third Party Member System
+		resultValidate := false
+		errorMessage := ""
+		if LiquidSDK.GetServer().GetRpcTrafficEnabled() {
+			if rpcResult, rpcErr := GRpcLogin(command); rpcErr != nil {
+				Logger.SysLog.Warnf("[RpcLogin] Transfer Failed, %s", rpcErr)
+				errorMessage = rpcErr.Error()
+			} else {
+				resultValidate = rpcResult.Valid
+				errorMessage = rpcResult.Msg
+				if rpcResult.OverrideFromId != "" {
+					command.FromId = rpcResult.OverrideFromId
+				}
+			}
+		} else {
+			member := LiquidSDK.GetServer().GetMemberSystem(command.FromType)
+			if member == nil {
+				errorMessage = "member system is not defined : " + command.FromToken
+			} else {
+				overrideFromId := ""
+				resultValidate, errorMessage, overrideFromId = member.Validate(command.FromId, command.FromToken)
+				if overrideFromId != "" {
+					command.FromId = overrideFromId
+				}
+			}
 		}
-
-		// Run Validation
-		resultValidate := member.Validate(command.FromId, command.FromToken)
 		if !resultValidate {
 			c.String(http.StatusOK, Middlewares.GetLiquidResult(gin.H{
-				"data": "member validate failed",
+				"data": errorMessage,
 			}))
 			return
 		}

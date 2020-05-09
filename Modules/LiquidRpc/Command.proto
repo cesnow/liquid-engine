@@ -5,6 +5,8 @@ package LiquidRpc;
 service GameAdapter {
     rpc Command (ReqCmd) returns (RespCmd) {
     }
+    rpc Login (ReqLogin) returns (RespLogin) {
+    }
 }
 
 message ReqCmd {
@@ -18,4 +20,18 @@ message ReqCmd {
 
 message RespCmd {
     bytes CmdData = 1;
+}
+
+message ReqLogin {
+    string FromType = 1;
+    string FromId = 2;
+    string FromToken = 3;
+    string Platform = 4;
+    bytes ExtraArgs = 5;
+}
+
+message RespLogin {
+    bool Valid = 1;
+    string Msg = 2;
+    string OverrideFromId = 3;
 }
