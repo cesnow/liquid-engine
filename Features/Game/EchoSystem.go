@@ -9,7 +9,7 @@ type EchoSystem struct {
 	LiquidSDK.GameSystem
 }
 
-func NewEchoSystem() *EchoSystem {
+func NewEchoSystem() LiquidSDK.IGameSystem {
 	echo := new(EchoSystem)
 	echo.LoadDefaultOperator()
 	return echo

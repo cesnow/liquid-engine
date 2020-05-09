@@ -52,15 +52,25 @@ func RouteLogin(c *gin.Context) {
 			return
 		}
 
-		// TODO: Customize Validate User Data (Unsupported)
-		//ResultValidate := Validate(command.FromType, command.FromId, command.FromToken)
-		//
-		//if ResultValidate == nil {
-		//	c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
-		//	return
-		//}
+		// Get Third Party Member System
+		member := LiquidSDK.GetServer().GetMemberSystem(command.FromType)
+		if member == nil {
+			c.String(http.StatusOK, Middlewares.GetLiquidResult(gin.H{
+				"data": "member system is not defined : " + command.FromToken,
+			}))
+			return
+		}
 
-		liquidUser = Models.FindLiquidUserFromType(command.FromType, command.FromId) // find from_type, from_id
+		// Run Validation
+		resultValidate := member.Validate(command.FromId, command.FromToken)
+		if !resultValidate {
+			c.String(http.StatusOK, Middlewares.GetLiquidResult(gin.H{
+				"data": "member validate failed",
+			}))
+			return
+		}
+
+		liquidUser = Models.FindLiquidUserFromType(command.FromType, command.FromId)
 		if liquidUser == nil {
 			liquidUser = Models.CreateLiquidUser(command.FromType, command.FromId)
 		}

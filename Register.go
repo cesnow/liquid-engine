@@ -32,6 +32,23 @@ func (engine *Engine) RegisterGame(GameCmd string, GameInstance LiquidSDK.IGameS
 	)
 }
 
+func (engine *Engine) RegisterMember(MemberType string, MemberInstance LiquidSDK.IMemberSystem){
+	registered := LiquidSDK.GetServer().RegisterMember(MemberType, MemberInstance)
+	if !registered {
+		Logger.SysLog.Warnf(
+			"[Engine] Register Member (Name: `%s`, GameCmd: `%s`) Failed, Member Type Duplicate!",
+			reflect.TypeOf(MemberInstance),
+			MemberType,
+		)
+		return
+	}
+	Logger.SysLog.Infof(
+		"[Engine] Member Registered (Name: `%s`, From: `%s`)",
+		reflect.TypeOf(MemberInstance),
+		MemberType,
+	)
+}
+
 func (engine *Engine) UsingRDBService() {
 	LiquidSDK.GetServer().ConnectRDbService(engine.Config.RDB)
 }

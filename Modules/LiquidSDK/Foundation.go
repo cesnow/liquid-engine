@@ -19,6 +19,7 @@ type LiquidServer struct {
 
 	systemGameDict map[string]IGameSystem
 	socketGameDict map[string]IGameSystem
+	memberDict     map[string]IMemberSystem
 
 	enableRpcTraffic  bool
 	gameRpcConnection LiquidRpc.GameAdapterClient
@@ -34,10 +35,11 @@ var once sync.Once
 func GetServer() *LiquidServer {
 	once.Do(func() {
 		liquidInstance = &LiquidServer{
-			TokenExpireTime:  1800,
+			TokenExpireTime:  int(time.Hour.Seconds()),
 			enableRpcTraffic: false,
 			systemGameDict:   make(map[string]IGameSystem),
 			socketGameDict:   make(map[string]IGameSystem),
+			memberDict:       make(map[string]IMemberSystem),
 		}
 	})
 	return liquidInstance

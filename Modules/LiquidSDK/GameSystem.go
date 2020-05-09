@@ -14,7 +14,6 @@ type IGameSystem interface {
 }
 
 type GameSystem struct {
-	ILiquidSystem,
 	functionDict map[string]func(string, IGameRequest) interface{}
 	drtFunctionDict  map[string]func(string, IGameRequest) interface{}
 	httpFunctionDict map[string]func(IGameRequest) interface{}
