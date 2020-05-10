@@ -40,13 +40,13 @@ func GRpcCommand(command *LiquidSDK.CmdCommand, direct bool) ([]byte, error) {
 func GRpcLogin(command *LiquidSDK.CmdAccount) (*LiquidRpc.RespLogin, error) {
 	c := LiquidSDK.GetServer().GetGameRpcConnection()
 
-	marshalExtraArgs, _ := json.Marshal(command.ExtraArgs)
+	marshalExtraArgs, _ := json.Marshal(command.ExtraData)
 	r, err := c.Login(context.Background(), &LiquidRpc.ReqLogin{
 		FromType:  command.FromType,
 		FromId:    command.FromId,
 		FromToken: command.FromToken,
 		Platform:  command.Platform,
-		ExtraArgs: marshalExtraArgs,
+		ExtraData: marshalExtraArgs,
 	})
 
 	if err != nil {

@@ -53,7 +53,7 @@ func (e *RpcFeature) Login(ctx context.Context, req *LiquidRpc.ReqLogin) (resp *
 		return validResp, nil
 	}
 	var extraArgs interface{}
-	_ = json.Unmarshal(req.ExtraArgs, &extraArgs)
+	_ = json.Unmarshal(req.ExtraData, &extraArgs)
 	resultValidate, resultMsg, resultOverrideFromId := member.Validate(
 		req.FromId,
 		req.FromToken,

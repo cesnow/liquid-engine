@@ -27,7 +27,7 @@ message ReqLogin {
     string FromId = 2;
     string FromToken = 3;
     string Platform = 4;
-    bytes ExtraArgs = 5;
+    bytes ExtraData = 5;
 }
 
 message RespLogin {

@@ -66,7 +66,7 @@ func RouteLogin(c *gin.Context) {
 					command.FromId,
 					command.FromToken,
 					command.Platform,
-					command.ExtraArgs,
+					command.ExtraData,
 				)
 				if overrideFromId != "" {
 					command.FromId = overrideFromId

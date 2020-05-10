@@ -19,7 +19,7 @@ type CmdAccount struct {
 	FromId    string      `json:"from_id" default:""`
 	FromToken string      `json:"from_token" default:""`
 	Platform  string      `json:"platform" default:"main"`
-	ExtraArgs interface{} `json:"extra_args" default:""`
+	ExtraData interface{} `json:"extra_data" default:""`
 }
 
 type CmdAccountResponse struct {
