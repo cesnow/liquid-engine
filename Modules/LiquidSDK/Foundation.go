@@ -35,7 +35,7 @@ var once sync.Once
 func GetServer() *LiquidServer {
 	once.Do(func() {
 		liquidInstance = &LiquidServer{
-			TokenExpireTime:  int(time.Hour.Seconds()),
+			TokenExpireTime:  24 * int(time.Hour.Seconds()),
 			enableRpcTraffic: false,
 			systemGameDict:   make(map[string]IGameSystem),
 			socketGameDict:   make(map[string]IGameSystem),
