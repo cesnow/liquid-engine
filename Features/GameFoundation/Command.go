@@ -48,13 +48,17 @@ func RouteCommand(c *gin.Context) {
 
 	// TODO: Server Maintain States (Unsupported)
 
-	setUserTokenErr := LiquidSDK.GetServer().GetCacheDb().SetString(tokenKey, liquidToken, 1800)
+	setUserTokenErr := LiquidSDK.GetServer().GetCacheDb().SetString(
+		tokenKey,
+		liquidToken,
+		LiquidSDK.GetServer().TokenExpireTime,
+	)
 	if setUserTokenErr != nil {
 		Logger.SysLog.Warnf("[CMD][Command] Refresh User Token Failed, %s", setUserTokenErr)
 	}
 
 	// gRpc Routing Mode Checking
-	if LiquidSDK.GetServer().GetRpcTrafficEnabled(){
+	if LiquidSDK.GetServer().GetRpcTrafficEnabled() {
 		if rpcResult, rpcErr := GRpcCommand(command, false); rpcErr != nil {
 			Logger.SysLog.Warnf("[CMD][Command] RPC Command Transfer Failed, %s", rpcErr)
 		} else {
@@ -62,7 +66,7 @@ func RouteCommand(c *gin.Context) {
 			_ = json.Unmarshal(rpcResult, &CmdResult)
 			result.CmdData = CmdResult
 		}
-	}else{
+	} else {
 		gameFeature := LiquidSDK.GetServer().GetGameFeature(*command.CmdId)
 		if gameFeature == nil {
 			c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
