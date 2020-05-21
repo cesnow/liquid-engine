@@ -46,7 +46,7 @@ func RouteAuth(c *gin.Context) {
 
 	// TODO: maybe multi login
 	tokenKey := fmt.Sprintf("token_%s_%s", liquidUser.AutoId, *command.Platform)
-	setUserTokenErr := LiquidSDK.GetServer().GetCacheDb().SetString(tokenKey, liquidToken, 1800)
+	setUserTokenErr := LiquidSDK.GetServer().GetCacheDb().SetString(tokenKey, liquidToken, 86400)
 	if setUserTokenErr != nil {
 		Logger.SysLog.Warnf("[CMD][Auth] Create User Token Failed, %s", setUserTokenErr)
 		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))

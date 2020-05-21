@@ -48,7 +48,7 @@ func RouteCommand(c *gin.Context) {
 
 	// TODO: Server Maintain States (Unsupported)
 
-	setUserTokenErr := LiquidSDK.GetServer().GetCacheDb().SetString(tokenKey, liquidToken, 1800)
+	setUserTokenErr := LiquidSDK.GetServer().GetCacheDb().SetString(tokenKey, liquidToken, 86400)
 	if setUserTokenErr != nil {
 		Logger.SysLog.Warnf("[CMD][Command] Refresh User Token Failed, %s", setUserTokenErr)
 	}
