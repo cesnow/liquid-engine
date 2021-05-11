@@ -5,6 +5,7 @@ import (
 	"github.com/cesnow/LiquidEngine/Modules/Database"
 	"github.com/cesnow/LiquidEngine/Modules/MsgQueue"
 	"github.com/cesnow/LiquidEngine/Settings"
+	"os"
 )
 
 func (server *LiquidServer) ConnectRDbService(config *Settings.RDBConf) {
@@ -20,6 +21,7 @@ func (server *LiquidServer) ConnectDocDbService(config *Settings.DocDbConf) {
 	client, err := Database.ConnectWithDocDB(config)
 	if err != nil {
 		Logger.SysLog.Errorf("[DocumentDB] Try To Connect Document Database Failed -> (%s)", err)
+		os.Exit(102)
 	}
 	server.liquidDocDb = client
 }
@@ -35,6 +37,7 @@ func (server *LiquidServer) ConnectCacheDbService(config *Settings.CacheDbConf) 
 	client, err := Database.ConnectWithCacheDB(config)
 	if err != nil {
 		Logger.SysLog.Errorf("[CacheDb] Try To Connect Cache Database Failed -> (%s)", err)
+		os.Exit(101)
 	}
 	server.liquidCacheDb = client
 }

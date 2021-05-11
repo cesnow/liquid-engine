@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/cesnow/LiquidEngine/Logger"
 	"github.com/cesnow/LiquidEngine/Settings"
+	"os"
 	"strconv"
 	"time"
 )
@@ -14,6 +15,10 @@ import (
 var liquidKeyTemplate = "LiquidServer_%s"
 
 func (server *LiquidServer) SetCodeName(codename string) {
+	if codename == "" {
+		Logger.SysLog.Errorf("[Engine] Codename is empty !!!")
+		os.Exit(100)
+	}
 	Logger.SysLog.Infof("[Engine] Codename -> %s", codename)
 	server.CodeName = codename
 }
