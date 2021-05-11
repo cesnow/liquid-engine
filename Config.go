@@ -2,7 +2,6 @@ package LiquidEngine
 
 import (
 	"errors"
-	"fmt"
 	"github.com/cesnow/LiquidEngine/Logger"
 	"github.com/cesnow/LiquidEngine/Options"
 	"github.com/cesnow/LiquidEngine/Settings"
@@ -85,7 +84,7 @@ func (config *Config) GetEnv(prefix string) (interface{}, error) {
 	if val, ok := config.custom[prefix]; ok {
 		return val, nil
 	}
-	fmt.Println(fmt.Errorf("[ConfigSystem] Config Not Found in Prefix `%s`, Please Check", prefix))
+	Logger.SysLog.Errorf("[ConfigSystem] Config Not Found in Prefix `%s`, Please Check", prefix)
 	return nil, errors.New("settings not found")
 }
 
