@@ -3,9 +3,14 @@ package LiquidEngine
 import (
 	"errors"
 	"fmt"
+	"github.com/cesnow/LiquidEngine/Logger"
 	"github.com/cesnow/LiquidEngine/Options"
 	"github.com/cesnow/LiquidEngine/Settings"
 	"github.com/koding/multiconfig"
+	"github.com/xxtea/xxtea-go/xxtea"
+	"os"
+	"reflect"
+	"strings"
 )
 
 type IConfig interface {
@@ -27,8 +32,53 @@ var _ IConfig = &Config{}
 
 func (config *Config) LoadExternalEnv(envPrefix string, conf interface{}, opts ...*Options.LoadEnvOptions) {
 	envOpt := Options.MergeLoadEnvOptions(opts...)
-	config.loadEnv(envPrefix, conf, envOpt)
-	config.custom[envPrefix] = conf
+	v := reflect.ValueOf(conf)
+	if v.IsValid() == false {
+		panic("not valid")
+	}
+	for v.Kind() == reflect.Ptr && !v.IsNil() {
+		v = v.Elem()
+	}
+	tv := v
+	if tv.Kind() == reflect.Ptr && tv.CanSet() {
+		tv.Set(reflect.New(tv.Type().Elem()))
+		tvi := tv.Interface()
+		elem := tv.Elem()
+		if elem.Kind() != reflect.Struct {
+			panic("[Config] not struct")
+		}
+
+		config.loadEnv(envPrefix, tvi, envOpt)
+		config.custom[envPrefix] = tvi
+		for i := 0; i < elem.NumField(); i++ {
+			valueField := elem.Field(i)
+			typeField := elem.Type().Field(i)
+			tag := typeField.Tag
+			decodedTag := tag.Get("decode")
+			decodedKey := tag.Get("key")
+			fieldRequired := tag.Get("required")
+			if fieldRequired == "true" && valueField.String() == "" {
+				Logger.SysLog.Errorf(
+					"[Config] Please check field required `%s -> %s`",
+					envPrefix,
+					elem.Type().Field(i).Name,
+				)
+				os.Exit(97)
+			}
+
+			if decodedKey != "" && decodedTag != "" {
+				newDecodedValue, deErr := xxtea.DecryptString(valueField.String(), decodedKey)
+				if deErr == nil {
+					if decodedTag == "pem" {
+						newDecodedValue = strings.Replace(newDecodedValue, `\n`, "\n", -1)
+					}
+					valueField.SetString(newDecodedValue)
+				} else {
+					Logger.SysLog.Warnf("[ConfigConvertFailed] %s -> %s -> %+v", typeField, valueField, deErr)
+				}
+			}
+		}
+	}
 }
 
 func (config *Config) GetEnv(prefix string) (interface{}, error) {
