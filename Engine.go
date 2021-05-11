@@ -9,6 +9,7 @@ import (
 	_ "github.com/cesnow/LiquidEngine/Features/HealthFoundation"
 	"github.com/cesnow/LiquidEngine/Logger"
 	"github.com/cesnow/LiquidEngine/Middlewares"
+	"github.com/cesnow/LiquidEngine/Modules/LiquidModule"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidRpc"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidSDK"
 	"github.com/cesnow/LiquidEngine/Options"
@@ -70,11 +71,12 @@ func New() *Engine {
 	LiquidSDK.GetServer().InitializeSystemDocIndexes()
 	LiquidSDK.GetServer().InitCodenameKey()
 	LiquidSDK.GetServer().InitRpcTraffic(engine.Config.App)
-	engine.initGinEngine()
+	engine.initializeGinEngine()
+	engine.initializeFeatures()
 	return engine
 }
 
-func (engine *Engine) initGinEngine() {
+func (engine *Engine) initializeGinEngine() {
 	gin.SetMode(engine.Config.Gin.RunMode)
 	engine.ginEngine = gin.New()
 	engine.ginEngine.Use(Middlewares.GinLogger(1 * time.Second))
@@ -89,6 +91,12 @@ func (engine *Engine) initGinEngine() {
 	engine.RegisterGin("Foundation", Foundation.Routers)
 	engine.RegisterGin("GameFoundation", GameFoundation.Routers)
 	engine.RegisterGin("HealthFoundation", HealthFoundation.Routers)
+}
+
+func (engine *Engine) initializeFeatures() {
+	for name, mod := range LiquidModule.GetModuleList() {
+		engine.RegisterGame(name, mod)
+	}
 }
 
 func (engine *Engine) GetGin() *gin.Engine {
