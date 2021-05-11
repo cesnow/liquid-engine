@@ -1,37 +1,27 @@
 module github.com/cesnow/LiquidEngine
 
-go 1.12
+go 1.14
 
 require (
-	github.com/DataDog/zstd v1.4.4 // indirect
+	github.com/Azure/azure-sdk-for-go v54.1.0+incompatible // indirect
+	github.com/Azure/go-autorest/autorest v0.11.18 // indirect
+	github.com/Azure/go-autorest/autorest/to v0.4.0 // indirect
+	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
 	github.com/fatih/camelcase v1.0.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
-	github.com/gin-contrib/cors v1.3.0
-	github.com/gin-gonic/gin v1.4.0
-	github.com/golang/protobuf v1.3.4
-	github.com/gomodule/redigo v2.0.0+incompatible
-	github.com/jinzhu/gorm v1.9.11
+	github.com/fortytw2/leaktest v1.3.0 // indirect
+	github.com/gin-contrib/cors v1.3.1
+	github.com/gin-gonic/gin v1.7.1
+	github.com/golang/protobuf v1.5.2
+	github.com/gomodule/redigo v1.8.4
+	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
-	github.com/json-iterator/go v1.1.7 // indirect
 	github.com/koding/multiconfig v0.0.0-20171124222453-69c27309b2d7
-	github.com/mattn/go-isatty v0.0.11 // indirect
-	github.com/mitchellh/mapstructure v1.1.2
-	github.com/tidwall/pretty v1.0.0 // indirect
-	github.com/ugorji/go v1.1.7 // indirect
-	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
-	github.com/xdg/stringprep v1.0.0 // indirect
-	go.mongodb.org/mongo-driver v1.2.0
-	go.uber.org/atomic v1.5.1 // indirect
-	go.uber.org/multierr v1.4.0 // indirect
-	go.uber.org/zap v1.13.0
-	golang.org/x/lint v0.0.0-20191125180803-fdd1cda4f05f // indirect
-	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
-	golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae // indirect
-	golang.org/x/text v0.3.2 // indirect
-	golang.org/x/tools v0.0.0-20200102200121-6de373a2766c // indirect
-	google.golang.org/genproto v0.0.0-20200227132054-3f1135a288c9 // indirect
-	google.golang.org/grpc v1.27.1
+	github.com/mitchellh/mapstructure v1.4.1
+	github.com/xxtea/xxtea-go v0.0.0-20170828040851-35c4b17eecf6
+	go.mongodb.org/mongo-driver v1.5.2
+	go.uber.org/zap v1.16.0
+	google.golang.org/grpc v1.37.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
-	gopkg.in/yaml.v2 v2.2.4 // indirect
-	pack.ag/amqp v0.12.3
+	pack.ag/amqp v0.12.5
 )
