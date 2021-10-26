@@ -92,7 +92,9 @@ func ConnectWithDocDB(config *Settings.DocDbConf) (*DocDB, error) {
 
 	connectUri.RawQuery = connectQuery.Encode()
 
-	Logger.SysLog.Infof("[DocumentDB] Try to connect document db `%s`", connectUri)
+	findIndexAt := strings.Index(connectUri.String(), "@")
+	printConnectUri := connectUri.String()[:findIndexAt-5] + "***" + connectUri.String()[findIndexAt:]
+	Logger.SysLog.Infof("[DocumentDB] Try to connect document db `%s`", printConnectUri)
 
 	clientOptions := options.Client().ApplyURI(connectUri.String())
 	client, err := mongo.NewClient(clientOptions)
