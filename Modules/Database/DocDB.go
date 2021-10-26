@@ -29,29 +29,7 @@ type DocDB struct {
 	config *Settings.DocDbConf
 }
 
-func fetchCaFileFromPath(url string) error {
-	getUrl, err := http.Get(url)
-	if err != nil {
-		return nil
-	}
-	out, err := os.Create("rds-ca.pem")
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-	_, err = io.Copy(out, getUrl.Body)
-	return err
-}
-
 func ConnectWithDocDB(config *Settings.DocDbConf) (*DocDB, error) {
-
-	// if ssl enabled, start download from path.
-	if config.SSL {
-		err := fetchCaFileFromPath(config.CaFilePath)
-		if err != nil {
-			return nil, err
-		}
-	}
 
 	docDb := &DocDB{
 		config: config,
