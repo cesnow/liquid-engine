@@ -5,6 +5,7 @@ import (
 	"github.com/cesnow/LiquidEngine/Modules/Database"
 	"github.com/cesnow/LiquidEngine/Modules/MsgQueue"
 	"github.com/cesnow/LiquidEngine/Settings"
+	"go.mongodb.org/mongo-driver/mongo"
 	"os"
 )
 
@@ -62,6 +63,20 @@ func (server *LiquidServer) GetDocDb() *Database.DocDB {
 		return nil
 	}
 	return server.liquidDocDb
+}
+
+func (server *LiquidServer) GetDocColl(collection string) *mongo.Collection {
+	if server.liquidDocDb == nil {
+		return nil
+	}
+	return server.liquidDocDb.Database(server.CodeName).Collection(collection)
+}
+
+func (server *LiquidServer) GetDocCollWithDb(dbName, collection string) *mongo.Collection {
+	if server.liquidDocDb == nil {
+		return nil
+	}
+	return server.liquidDocDb.Database(dbName).Collection(collection)
 }
 
 func (server *LiquidServer) GetCacheDb() *Database.CacheDB {
