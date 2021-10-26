@@ -11,10 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"go.mongodb.org/mongo-driver/x/bsonx"
-	"io"
-	"net/http"
 	"net/url"
-	"os"
+	"strings"
 	"time"
 )
 
@@ -54,11 +52,6 @@ func ConnectWithDocDB(config *Settings.DocDbConf) (*DocDB, error) {
 
 	connectUri, _ := url.Parse(connectionURI)
 	connectQuery, _ := url.ParseQuery(connectUri.RawQuery)
-
-	if config.SSL {
-		connectQuery.Add("ssl", "true")
-		connectQuery.Add("sslcertificateauthorityfile", "rds-ca.pem")
-	}
 
 	if config.ReplicaSet != "" {
 		connectQuery.Add("replicaSet", config.ReplicaSet)
@@ -175,4 +168,8 @@ func (db *DocDB) ListIndexes(database, collection string) {
 
 func (db *DocDB) GetClient() *mongo.Client {
 	return db.client
+}
+
+func (db *DocDB) Database(dbname string) *mongo.Database {
+	return db.client.Database(dbname)
 }
