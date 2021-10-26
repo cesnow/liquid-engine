@@ -57,7 +57,7 @@ func CreateLiquidUser(fromType string, fromId string) *LiquidUser {
 		return nil
 	}
 
-	CreateDefaultPlayerData(autoId)
+	createDefaultUserData(autoId)
 
 	liquidUser = FindLiquidGuestUser(autoId)
 	return liquidUser
