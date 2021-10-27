@@ -8,9 +8,10 @@ type CmdSignedBody struct {
 
 // Register
 type CmdRegister struct {
-	FromType string `json:"from_type"`
-	Account  string `json:"account"`
-	Password string `json:"password"`
+	FromType  string      `json:"from_type"`
+	Account   string      `json:"account"`
+	Password  string      `json:"password"`
+	ExtraData interface{} `json:"extra_data" default:""`
 }
 
 // Login, Verify

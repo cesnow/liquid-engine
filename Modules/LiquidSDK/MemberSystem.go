@@ -1,6 +1,12 @@
 package LiquidSDK
 
 type IMemberSystem interface {
+	Register(
+		fromType,
+		account,
+		password,
+		platform string,
+		extraArgs interface{})(status int, error string)
 	Validate(
 		fromId,
 		fromToken,

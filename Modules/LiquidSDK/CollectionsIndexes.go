@@ -1,11 +1,11 @@
 package LiquidSDK
 
 func (server *LiquidServer) EnsureLiquidMemberIndexes() {
-	server.GetDocDb().PopulateIndex(
+	server.GetDocDb().PopulateMultiIndex(
 		server.CodeName,
 		ColNameLiquidMember,
-		"account",
-		-1,
+		[]string{"account", "from_type"},
+		[]int32{-1, -1},
 		true,
 	)
 }
