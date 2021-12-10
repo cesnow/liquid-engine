@@ -28,6 +28,10 @@ func (gameSystem *GameSystem) RunCommand(data *CmdCommand) interface{} {
 
 func (gameSystem *GameSystem) RunDirectCommand(data *CmdCommand) interface{} {
 	RequestData := &GameRequest{CmdData: data.CmdData}
+	if data.LiquidId == nil {
+		emptyLiquidId := ""
+		data.LiquidId = &emptyLiquidId
+	}
 	if opFunc, opFuncExist := gameSystem.drtFunctionDict[*data.CmdName]; opFuncExist {
 		return opFunc(*data.LiquidId, RequestData)
 	}
