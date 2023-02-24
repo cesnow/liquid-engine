@@ -63,8 +63,13 @@ func ConnectWithDocDB(config *Settings.DocDbConf) (*DocDB, error) {
 
 	connectUri.RawQuery = connectQuery.Encode()
 
+	printConnectUri := connectUri.String()
 	findIndexAt := strings.Index(connectUri.String(), "@")
-	printConnectUri := connectUri.String()[:findIndexAt-5] + "***" + connectUri.String()[findIndexAt:]
+	if findIndexAt > -1 && config.Username != ""{
+		prefixIndex := len(config.Protocol) + 3 + len(config.Username)
+		connectUriStr := connectUri.String()
+		printConnectUri = fmt.Sprintf("%s:*****%s", connectUriStr[:prefixIndex], connectUriStr[findIndexAt:]
+	}
 	Logger.SysLog.Infof("[DocumentDB] Try to connect document db `%s`", printConnectUri)
 
 	clientOptions := options.Client().ApplyURI(connectUri.String())
