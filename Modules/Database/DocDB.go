@@ -65,10 +65,10 @@ func ConnectWithDocDB(config *Settings.DocDbConf) (*DocDB, error) {
 
 	printConnectUri := connectUri.String()
 	findIndexAt := strings.Index(connectUri.String(), "@")
-	if findIndexAt > -1 && config.Username != ""{
+	if findIndexAt > -1 && config.Username != "" {
 		prefixIndex := len(config.Protocol) + 3 + len(config.Username)
 		connectUriStr := connectUri.String()
-		printConnectUri = fmt.Sprintf("%s:*****%s", connectUriStr[:prefixIndex], connectUriStr[findIndexAt:]
+		printConnectUri = fmt.Sprintf("%s:*****%s", connectUriStr[:prefixIndex], connectUriStr[findIndexAt:])
 	}
 	Logger.SysLog.Infof("[DocumentDB] Try to connect document db `%s`", printConnectUri)
 
@@ -104,7 +104,7 @@ func (db *DocDB) PopulateIndex(database, collection, key string, sort int32, uni
 	c := db.client.Database(database).Collection(collection)
 	opts := options.CreateIndexes().SetMaxTime(3 * time.Second)
 	index := db.yieldIndexModel(
-		[]string{key,}, []int32{sort,}, unique, nil,
+		[]string{key}, []int32{sort}, unique, nil,
 	)
 	_, err := c.Indexes().CreateOne(context.Background(), index, opts)
 	if err != nil {
@@ -116,7 +116,7 @@ func (db *DocDB) PopulateTTLIndex(database, collection, key string, sort int32, 
 	c := db.client.Database(database).Collection(collection)
 	opts := options.CreateIndexes().SetMaxTime(3 * time.Second)
 	index := db.yieldIndexModel(
-		[]string{key,}, []int32{sort,}, unique,
+		[]string{key}, []int32{sort}, unique,
 		options.Index().SetExpireAfterSeconds(ttl),
 	)
 	_, err := c.Indexes().CreateOne(context.Background(), index, opts)
