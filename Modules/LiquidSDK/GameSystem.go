@@ -1,20 +1,17 @@
 package LiquidSDK
 
 import (
-	"encoding/json"
 	"github.com/cesnow/LiquidEngine/Logger"
-	"github.com/cesnow/LiquidEngine/Modules/LiquidRpc"
 )
 
 type IGameSystem interface {
 	RunCommand(*CmdCommand) interface{}
 	RunDirectCommand(*CmdCommand) interface{}
 	RunHttpCommand(*CmdCommand) interface{}
-	RunRpcCommand(cmd *LiquidRpc.ReqCmd) interface{}
 }
 
 type GameSystem struct {
-	functionDict map[string]func(string, IGameRequest) interface{}
+	functionDict     map[string]func(string, IGameRequest) interface{}
 	drtFunctionDict  map[string]func(string, IGameRequest) interface{}
 	httpFunctionDict map[string]func(IGameRequest) interface{}
 }
@@ -42,23 +39,6 @@ func (gameSystem *GameSystem) RunHttpCommand(data *CmdCommand) interface{} {
 	RequestData := &GameRequest{CmdData: data.CmdData}
 	if httpFunc, httpFuncExist := gameSystem.httpFunctionDict[*data.CmdName]; httpFuncExist {
 		return httpFunc(RequestData)
-	}
-	return nil
-}
-
-func (gameSystem *GameSystem) RunRpcCommand(data *LiquidRpc.ReqCmd) interface{} {
-	searchDic := gameSystem.functionDict
-	if data.Direct {
-		searchDic = gameSystem.drtFunctionDict
-	}
-	if opFunc, opFuncExist := searchDic[data.CmdName]; opFuncExist {
-		Req := &GameRequest{CmdData: nil}
-		_ = json.Unmarshal(data.CmdData, &Req.CmdData)
-		return opFunc(data.UserID, Req)
-	} else {
-		if httpFunc, httpFuncExist := gameSystem.httpFunctionDict[data.CmdName]; httpFuncExist {
-			return httpFunc(&GameRequest{CmdData: data.CmdData})
-		}
 	}
 	return nil
 }

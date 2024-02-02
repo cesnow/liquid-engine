@@ -10,7 +10,6 @@ import (
 	"github.com/cesnow/LiquidEngine/Logger"
 	"github.com/cesnow/LiquidEngine/Middlewares"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidModule"
-	"github.com/cesnow/LiquidEngine/Modules/LiquidRpc"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidSDK"
 	"github.com/cesnow/LiquidEngine/Options"
 	"github.com/cesnow/LiquidEngine/Settings"
@@ -18,11 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"
-	"google.golang.org/grpc"
 	_ "google.golang.org/grpc/encoding/gzip"
-	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/reflection"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -70,7 +65,6 @@ func New() *Engine {
 	LiquidSDK.GetServer().ConnectDocDbService(engine.Config.DocDB)
 	LiquidSDK.GetServer().InitializeSystemDocIndexes()
 	LiquidSDK.GetServer().InitCodenameKey()
-	LiquidSDK.GetServer().InitRpcTraffic(engine.Config.App)
 	engine.initializeGinEngine()
 	engine.initializeFeatures()
 	return engine
@@ -141,64 +135,6 @@ func (engine *Engine) Serve(opts ...*Options.ServeOptions) {
 			Logger.SysLog.Warnf("[Engine] Shutdown Server with Error, %s", err)
 		}
 
-		exitChan <- true
-	}()
-
-	<-exitChan
-	Logger.SysLog.Warn("[Engine] Shutdown Server")
-}
-
-func (engine *Engine) RpcModeServe() {
-
-	var keepAliveEP = keepalive.EnforcementPolicy{
-		MinTime:             5 * time.Second, // If a client pings more than once every 5 seconds, terminate the connection
-		PermitWithoutStream: true,            // Allow pings even when there are no active streams
-	}
-
-	var keepAliveSP = keepalive.ServerParameters{
-		MaxConnectionIdle:     15 * time.Second, // If a client is idle for 15 seconds, send a GOAWAY
-		MaxConnectionAge:      30 * time.Second, // If any connection is alive for more than 30 seconds, send a GOAWAY
-		MaxConnectionAgeGrace: 5 * time.Second,  // Allow 5 seconds for pending RPCs to complete before forcibly closing connections
-		Time:                  5 * time.Second,  // Ping the client if it is idle for 5 seconds to ensure the connection is still active
-		Timeout:               1 * time.Second,  // Wait 1 second for the ping ack before assuming the connection is dead
-	}
-
-	var gRpcServer *grpc.Server
-	go func() {
-		serveTime := time.Now()
-		apiListener, err := net.Listen("tcp", fmt.Sprintf(":%d", engine.Config.App.RpcBindPort))
-		if err != nil {
-			Logger.SysLog.Warnf("[Engine] gRPC Mode Serve Failed (%s)", err)
-			return
-		}
-		gRpcServer = grpc.NewServer(
-			grpc.InitialWindowSize(64*1024*2),
-			grpc.InitialConnWindowSize(64*1024*2),
-			grpc.KeepaliveEnforcementPolicy(keepAliveEP),
-			grpc.KeepaliveParams(keepAliveSP),
-			grpc.MaxRecvMsgSize(50*1024*1024),
-			grpc.MaxSendMsgSize(50*1024*1024),
-		)
-		LiquidRpc.RegisterGameAdapterServer(gRpcServer, &LiquidSDK.RpcFeature{})
-		reflection.Register(gRpcServer)
-		Logger.SysLog.Infof("[Engine] Serving gRpc(:%d) in %dms",
-			engine.Config.App.RpcBindPort,
-			serveTime.Sub(engine.StartTime).Milliseconds(),
-		)
-		if err := gRpcServer.Serve(apiListener); err != nil {
-			Logger.SysLog.Warnf("[Engine] gRPC Mode Serve Failed (%s)", err)
-			return
-		}
-	}()
-
-	signalChan := make(chan os.Signal)
-	exitChan := make(chan bool)
-	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		sig := <-signalChan
-		Logger.SysLog.Warnf("[Engine] Caught Signal(%03d)", sig)
-		gRpcServer.Stop()
 		exitChan <- true
 	}()
 

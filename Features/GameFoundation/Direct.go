@@ -22,25 +22,14 @@ func RouteDirect(c *gin.Context) {
 		CmdSn:   nil,
 	}
 
-	// gRpc Routing Mode Checking
-	if LiquidSDK.GetServer().GetRpcTrafficEnabled(){
-		if rpcResult, rpcErr := GRpcCommand(command, true); rpcErr != nil {
-			Logger.SysLog.Warnf("[CMD][Command] RPC Command Transfer Failed, %s", rpcErr)
-		} else {
-			var CmdResult interface{}
-			_ = json.Unmarshal(rpcResult, &CmdResult)
-			result.CmdData = CmdResult
-		}
-	}else{
-		gameFeature := LiquidSDK.GetServer().GetGameFeature(*command.CmdId)
-		if gameFeature == nil {
-			c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
-			c.Abort()
-			return
-		}
-		runCommandData := gameFeature.RunDirectCommand(command)
-		result.CmdData = runCommandData
+	gameFeature := LiquidSDK.GetServer().GetGameFeature(*command.CmdId)
+	if gameFeature == nil {
+		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.Abort()
+		return
 	}
+	runCommandData := gameFeature.RunDirectCommand(command)
+	result.CmdData = runCommandData
 
 	result.CmdSn = command.CmdSn
 	c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
