@@ -45,34 +45,23 @@ func RouteLogin(c *gin.Context) {
 		// Run Validation, Third Party Member System
 		resultValidate := false
 		errorMessage := ""
-		if LiquidSDK.GetServer().GetRpcTrafficEnabled() {
-			if rpcResult, rpcErr := GRpcLogin(command); rpcErr != nil {
-				Logger.SysLog.Warnf("[RpcLogin] Transfer Failed, %s", rpcErr)
-				errorMessage = rpcErr.Error()
-			} else {
-				resultValidate = rpcResult.Valid
-				errorMessage = rpcResult.Msg
-				if rpcResult.OverrideFromId != "" {
-					command.FromId = rpcResult.OverrideFromId
-				}
-			}
+
+		member := LiquidSDK.GetServer().GetMemberSystem(command.FromType)
+		if member == nil {
+			errorMessage = "member system is not defined : " + command.FromToken
 		} else {
-			member := LiquidSDK.GetServer().GetMemberSystem(command.FromType)
-			if member == nil {
-				errorMessage = "member system is not defined : " + command.FromToken
-			} else {
-				overrideFromId := ""
-				resultValidate, errorMessage, overrideFromId = member.Validate(
-					command.FromId,
-					command.FromToken,
-					command.Platform,
-					command.ExtraData,
-				)
-				if overrideFromId != "" {
-					command.FromId = overrideFromId
-				}
+			overrideFromId := ""
+			resultValidate, errorMessage, overrideFromId = member.Validate(
+				command.FromId,
+				command.FromToken,
+				command.Platform,
+				command.ExtraData,
+			)
+			if overrideFromId != "" {
+				command.FromId = overrideFromId
 			}
 		}
+
 		if !resultValidate {
 			c.String(http.StatusOK, Middlewares.GetLiquidResult(gin.H{
 				"data": errorMessage,
