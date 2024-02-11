@@ -38,7 +38,7 @@ func RouteLogin(c *gin.Context) {
 	} else {
 
 		if command.FromId == "" || command.FromToken == "" {
-			c.String(http.StatusOK, Middlewares.GetLiquidResult(gin.H{"data": "from_id or from_token is empty"}))
+			c.String(http.StatusUnauthorized, Middlewares.GetLiquidResult(gin.H{"data": "from_id or from_token is empty"}))
 			return
 		}
 
@@ -63,7 +63,7 @@ func RouteLogin(c *gin.Context) {
 		}
 
 		if !resultValidate {
-			c.String(http.StatusOK, Middlewares.GetLiquidResult(gin.H{
+			c.String(http.StatusUnauthorized, Middlewares.GetLiquidResult(gin.H{
 				"data": errorMessage,
 			}))
 			return
@@ -74,6 +74,11 @@ func RouteLogin(c *gin.Context) {
 			liquidUser = Models.CreateLiquidUser(command.FromType, command.FromId)
 		}
 
+	}
+
+	if liquidUser.IsDeactivate == true {
+		c.String(http.StatusForbidden, Middlewares.GetLiquidResult(result))
+		return
 	}
 
 	// TODO: BlockSystem (Unsupported)

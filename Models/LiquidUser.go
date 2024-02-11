@@ -10,13 +10,18 @@ import (
 )
 
 type LiquidUser struct {
-	AutoId     string    `json:"auto_id" bson:"auto_id"`
-	InviteCode string    `json:"invite_code" bson:"invite_code"`
-	Create     time.Time `json:"create" bson:"create"`
-	Update     time.Time `json:"update" bson:"update"`
-	FromType   string    `json:"from_type" bson:"from_type"`
-	FromId     string    `json:"from_id" bson:"from_id"`
-	FromToken  string    `json:"from_token" bson:"from_token"`
+	AutoId      string `json:"auto_id" bson:"auto_id"`
+	InviteCode  string `json:"invite_code" bson:"invite_code"`
+	Fingerprint string `json:"fingerprint" bson:"fingerprint"`
+
+	FromType  string `json:"from_type" bson:"from_type"`
+	FromId    string `json:"from_id" bson:"from_id"`
+	FromToken string `json:"from_token" bson:"from_token"`
+
+	IsDeactivate bool `json:"is_deactivate" bson:"is_deactivate"`
+
+	Create time.Time `json:"create" bson:"create"`
+	Update time.Time `json:"update" bson:"update"`
 }
 
 func FindLiquidGuestUser(autoId string) *LiquidUser {
@@ -38,18 +43,21 @@ func CreateLiquidUser(fromType string, fromId string) *LiquidUser {
 
 	dateTime := time.Now()
 	inviteCode := getAutoIdToInviteCode(autoId)
+	fingerprint := ""
 
 	if fromId == "" {
 		fromId = autoId
 	}
 
 	liquidUser := &LiquidUser{
-		AutoId:     autoId,
-		InviteCode: inviteCode,
-		Create:     dateTime,
-		Update:     dateTime,
-		FromType:   fromType,
-		FromId:     fromId,
+		AutoId:       autoId,
+		InviteCode:   inviteCode,
+		Fingerprint:  fingerprint,
+		FromType:     fromType,
+		FromId:       fromId,
+		IsDeactivate: false,
+		Create:       dateTime,
+		Update:       dateTime,
 	}
 
 	_, insertErr := LiquidSDK.GetServer().GetLiquidUserCol().InsertOne(nil, liquidUser)

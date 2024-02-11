@@ -23,7 +23,7 @@ func RouteAuth(c *gin.Context) {
 	result := &LiquidSDK.CmdAuthResponse{}
 
 	if command.AutoId == nil || command.InviteCode == nil {
-		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.String(http.StatusUnauthorized, Middlewares.GetLiquidResult(result))
 		return
 	}
 
@@ -34,7 +34,12 @@ func RouteAuth(c *gin.Context) {
 
 	liquidUser := Models.FindLiquidUserByAutoId(*command.AutoId, *command.InviteCode)
 	if liquidUser == nil {
-		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.String(http.StatusUnauthorized, Middlewares.GetLiquidResult(result))
+		return
+	}
+
+	if liquidUser.IsDeactivate == true {
+		c.String(http.StatusForbidden, Middlewares.GetLiquidResult(result))
 		return
 	}
 
@@ -53,7 +58,7 @@ func RouteAuth(c *gin.Context) {
 	)
 	if setUserTokenErr != nil {
 		Logger.SysLog.Warnf("[CMD][Auth] Create User Token Failed, %s", setUserTokenErr)
-		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.String(http.StatusInternalServerError, Middlewares.GetLiquidResult(result))
 		return
 	}
 
