@@ -2,6 +2,7 @@ package GameFoundation
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/cesnow/LiquidEngine/Logger"
 	"github.com/cesnow/LiquidEngine/Middlewares"
 	"github.com/cesnow/LiquidEngine/Modules/LiquidSDK"
@@ -24,7 +25,10 @@ func RouteDirect(c *gin.Context) {
 
 	gameFeature := LiquidSDK.GetServer().GetGameFeature(*command.CmdId)
 	if gameFeature == nil {
-		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.String(http.StatusForbidden, Middlewares.GetLiquidResult(gin.H{
+			"status": 5001,
+			"error":  fmt.Sprintf("feature(cmd_id) not found !"),
+		}))
 		c.Abort()
 		return
 	}

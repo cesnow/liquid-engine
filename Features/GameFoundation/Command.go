@@ -25,7 +25,10 @@ func RouteCommand(c *gin.Context) {
 
 	if command.LiquidId == nil || command.LiquidToken == nil {
 		Logger.SysLog.Warnf("[CMD][Command] ID & Token is empty !")
-		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.String(http.StatusBadRequest, Middlewares.GetLiquidResult(gin.H{
+			"status": 4001,
+			"error":  fmt.Sprintf("ID & Token is empty !"),
+		}))
 		c.Abort()
 		return
 	}
@@ -41,12 +44,15 @@ func RouteCommand(c *gin.Context) {
 
 	if authTokenErr != nil || liquidToken != *command.LiquidToken {
 		Logger.SysLog.Warnf("[CMD][Command] Data Verify Failed")
-		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.String(http.StatusUnauthorized, Middlewares.GetLiquidResult(gin.H{
+			"status": 4002,
+			"error":  fmt.Sprintf("data verify failed !"),
+		}))
 		c.Abort()
 		return
 	}
 
-	// TODO: Server Maintain States (Unsupported)
+	// TODO: Server Maintain States (Unsupported) 4003
 
 	setUserTokenErr := LiquidSDK.GetServer().GetCacheDb().SetString(tokenKey, liquidToken, 1800)
 	if setUserTokenErr != nil {
@@ -55,7 +61,10 @@ func RouteCommand(c *gin.Context) {
 
 	gameFeature := LiquidSDK.GetServer().GetGameFeature(*command.CmdId)
 	if gameFeature == nil {
-		c.String(http.StatusOK, Middlewares.GetLiquidResult(result))
+		c.String(http.StatusForbidden, Middlewares.GetLiquidResult(gin.H{
+			"status": 4004,
+			"error":  fmt.Sprintf("feature(cmd_id) not found !"),
+		}))
 		c.Abort()
 		return
 	}
