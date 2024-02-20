@@ -56,6 +56,14 @@ func (server *LiquidServer) InitCodenameKey() {
 	Logger.SysLog.Infof("[Engine] System Key -> %s", server.LiquidKey)
 }
 
+func (server *LiquidServer) SetTokenExpireTime(seconds int) {
+	if seconds < int(time.Hour.Seconds()) {
+		Logger.SysLog.Errorf("[Engine] Token Expire Time Must Over 3600 Seconds !!!")
+		return
+	}
+	server.TokenExpireTime = seconds
+}
+
 func (server *LiquidServer) GenerateKey() {
 	conJunctions := "-LiquidSDK-"
 	md5Generate := md5.New()
