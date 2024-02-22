@@ -65,8 +65,14 @@ func GinLogger(duration time.Duration) gin.HandlerFunc {
 			latencyUnit = "ms"
 		}
 
+		msg := ""
+		ginMsg, msgExists := c.Get("GIN_MSG")
+		if msgExists {
+			msg = ginMsg.(string)
+		}
+
 		message := fmt.Sprintf(
-			"%s[%d]%s%s[%s]%s %s (%.3f %s)",
+			"%s[%d]%s%s[%s]%s %s %s (%.3f %s)",
 			statusColor,
 			statusCode,
 			reset,
@@ -74,6 +80,7 @@ func GinLogger(duration time.Duration) gin.HandlerFunc {
 			method,
 			reset,
 			path,
+			msg,
 			latencyDiff,
 			latencyUnit,
 		)

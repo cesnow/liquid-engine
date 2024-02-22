@@ -18,6 +18,8 @@ func RouteDirect(c *gin.Context) {
 		Logger.SysLog.Warnf("[CMD][Command] Unmarshal Command Data Failed, %s", unmarshalErr)
 	}
 
+	c.Set("GIN_MSG", fmt.Sprintf("(sn: %s, id: %s, name: %s)", *command.CmdSn, *command.CmdId, *command.CmdName))
+
 	result := &LiquidSDK.CmdCommandResponse{
 		CmdData: nil,
 		CmdSn:   nil,
