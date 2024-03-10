@@ -1,2 +1,2 @@
 # LiquidEngine
-LiquidEngine is a HTTP Game framework written in Go (Golang).
+LiquidEngine is a HTTP framework written in Go (Golang).
