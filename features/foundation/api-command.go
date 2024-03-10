@@ -12,14 +12,14 @@ func RouteApiCommand(c *gin.Context) {
 	cmdLiquidUser, _ := c.Get("LiquidUser")
 	loginClaims := cmdLiquidUser.(*middlewares.LoginClaims)
 
-	cmdId := c.Param("CmdId")
+	featureId := c.Param("FeatureId")
 	cmdName := c.Param("CmdName")
 	rawBody, _ := c.GetRawData()
 
 	command := &LiquidSDK.CmdCommand{
 		LiquidId: &loginClaims.AutoId,
 		Platform: nil,
-		CmdId:    &cmdId,
+		CmdId:    &featureId,
 		CmdSn:    nil,
 		CmdName:  &cmdName,
 		CmdData:  string(rawBody),

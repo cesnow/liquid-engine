@@ -9,7 +9,7 @@ import (
 
 func RouteApiDirect(c *gin.Context) {
 
-	cmdId := c.Param("CmdId")
+	featureId := c.Param("FeatureId")
 	cmdName := c.Param("CmdName")
 	rawBody, _ := c.GetRawData()
 
@@ -17,7 +17,7 @@ func RouteApiDirect(c *gin.Context) {
 		LiquidId:    nil,
 		LiquidToken: nil,
 		Platform:    nil,
-		CmdId:       &cmdId,
+		CmdId:       &featureId,
 		CmdSn:       nil,
 		CmdName:     &cmdName,
 		CmdData:     string(rawBody),
