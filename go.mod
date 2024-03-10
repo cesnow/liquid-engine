@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.50.35
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.9.1
-	github.com/gomodule/redigo v1.8.4
+	github.com/gomodule/redigo v1.9.2
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
 	github.com/koding/multiconfig v0.0.0-20171124222453-69c27309b2d7
