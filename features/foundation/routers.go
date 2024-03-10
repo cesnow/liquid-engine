@@ -10,22 +10,24 @@ func Routers(gin *gin.Engine) {
 	gin.GET("/", Root)
 	gin.GET("/@", RootKey)
 
-	FoundationRouters := gin.Group("@")
-	FoundationRouters.GET("/api/:CmdId/:CmdName", RouteApiDirect)
-	FoundationRouters.POST("/api/login", RouteApiLogin)
-	FoundationRouters.Use(middlewares.VerifyToken())
+	ApiFoundationRouters := gin.Group("@")
+	ApiFoundationRouters.GET("/api/:CmdId/:CmdName", RouteApiDirect)
+	ApiFoundationRouters.POST("/api/login", RouteApiLogin)
+	ApiFoundationRouters.Use(middlewares.VerifyToken())
 	{
-		FoundationRouters.POST("/api/:CmdId/:CmdName", RouteApiCommand)
+		ApiFoundationRouters.POST("/api/:CmdId/:CmdName", RouteApiCommand)
 	}
-	FoundationRouters.Use(middlewares.GetLiquidData())
+
+	CommandFoundationRouters := gin.Group("@")
+	CommandFoundationRouters.Use(middlewares.GetLiquidData())
 	{
-		FoundationRouters.POST("/register", RouteRegister)
-		FoundationRouters.POST("/login", RouteLogin)
-		FoundationRouters.POST("/verify", RouteVerify)
-		FoundationRouters.POST("/bind", RouteBind)
-		FoundationRouters.POST("/auth", RouteAuth)
-		FoundationRouters.POST("/command", RouteCommand)
-		FoundationRouters.POST("/direct", RouteDirect)
+		CommandFoundationRouters.POST("/register", RouteRegister)
+		CommandFoundationRouters.POST("/login", RouteLogin)
+		CommandFoundationRouters.POST("/verify", RouteVerify)
+		CommandFoundationRouters.POST("/bind", RouteBind)
+		CommandFoundationRouters.POST("/auth", RouteAuth)
+		CommandFoundationRouters.POST("/command", RouteCommand)
+		CommandFoundationRouters.POST("/direct", RouteDirect)
 	}
 
 }
