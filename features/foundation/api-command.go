@@ -3,8 +3,6 @@ package foundation
 import (
 	"github.com/cesnow/liquid-engine/internal/middlewares"
 	LiquidSDK "github.com/cesnow/liquid-engine/liquid-sdk"
-	"github.com/cesnow/liquid-engine/logger"
-
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -13,8 +11,6 @@ func RouteApiCommand(c *gin.Context) {
 
 	cmdLiquidUser, _ := c.Get("LiquidUser")
 	loginClaims := cmdLiquidUser.(*middlewares.LoginClaims)
-
-	logger.SysLog.Infof("[CMD][xxxxx] %+v", loginClaims)
 
 	cmdId := c.Param("CmdId")
 	cmdName := c.Param("CmdName")
