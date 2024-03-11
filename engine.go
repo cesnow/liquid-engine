@@ -3,13 +3,13 @@ package LiquidEngine
 import (
 	"context"
 	"fmt"
+	"github.com/cesnow/liquid-engine/features/route-health"
+	"github.com/cesnow/liquid-engine/features/route-pprof"
 	"github.com/cesnow/liquid-engine/internal/feature-register"
 	LiquidDb "github.com/cesnow/liquid-engine/liquid-db"
-	LiquidSDK "github.com/cesnow/liquid-engine/liquid-sdk"
+	"github.com/cesnow/liquid-engine/liquid-sdk"
 
 	"github.com/cesnow/liquid-engine/features/foundation"
-	"github.com/cesnow/liquid-engine/features/health"
-	_ "github.com/cesnow/liquid-engine/features/health"
 	"github.com/cesnow/liquid-engine/internal/middlewares"
 	"github.com/cesnow/liquid-engine/logger"
 	"github.com/cesnow/liquid-engine/options"
@@ -85,7 +85,8 @@ func (engine *Engine) initializeGinEngine() {
 		MaxAge:           12 * time.Hour,
 	}))
 	engine.RegisterGin("Foundation", foundation.Routers)
-	engine.RegisterGin("HealthFoundation", health.Routers)
+	engine.RegisterGin("HealthFoundation", route_health.Routers)
+	engine.RegisterGin("PProfFoundation", route_pprof.Routers)
 }
 
 func (engine *Engine) initializeFeatures() {

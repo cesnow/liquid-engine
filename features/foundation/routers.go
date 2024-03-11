@@ -8,17 +8,18 @@ import (
 func Routers(gin *gin.Engine) {
 
 	gin.GET("/", Root)
-	gin.GET("/@", RootKey)
 
-	ApiFoundationRouters := gin.Group("@")
-	ApiFoundationRouters.GET("/api/:FeatureId/:CmdName", RouteApiDirect)
-	ApiFoundationRouters.POST("/api/login", RouteApiLogin)
+	ApiFoundationRouters := gin.Group("/api")
+	ApiFoundationRouters.GET("key", RootKey)
+	ApiFoundationRouters.GET(":FeatureId/:CmdName", RouteApiDirect)
+	ApiFoundationRouters.POST("login", RouteApiLogin)
 	ApiFoundationRouters.Use(middlewares.VerifyToken())
 	{
-		ApiFoundationRouters.POST("/api/:FeatureId/:CmdName", RouteApiCommand)
+		ApiFoundationRouters.POST(":FeatureId/:CmdName", RouteApiCommand)
 	}
 
 	CommandFoundationRouters := gin.Group("@")
+	CommandFoundationRouters.GET("", RootKey)
 	CommandFoundationRouters.Use(middlewares.GetLiquidData())
 	{
 		CommandFoundationRouters.POST("/register", RouteRegister)
