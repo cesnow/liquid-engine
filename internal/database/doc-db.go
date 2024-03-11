@@ -10,7 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"go.mongodb.org/mongo-driver/x/bsonx"
 
 	"net/url"
 	"strings"
@@ -141,11 +140,11 @@ func (db *DocDB) PopulateMultiIndex(database, collection string, keys []string, 
 }
 
 func (db *DocDB) yieldIndexModel(keys []string, sorts []int32, unique bool, indexOpt *options.IndexOptions) mongo.IndexModel {
-	SetKeysDoc := bsonx.Doc{}
+	SetKeysDoc := bson.D{}
 	for index, _ := range keys {
 		key := keys[index]
 		sort := sorts[index]
-		SetKeysDoc = SetKeysDoc.Append(key, bsonx.Int32(sort))
+		SetKeysDoc = append(SetKeysDoc, bson.E{Key: key, Value: sort})
 	}
 	if indexOpt == nil {
 		indexOpt = options.Index()

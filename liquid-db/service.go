@@ -10,11 +10,6 @@ import (
 )
 
 func (db *LiquidDB) SetCodeName(codename string) {
-	if codename == "" {
-		logger.SysLog.Errorf("[Engine] Codename is empty !!!")
-		os.Exit(100)
-	}
-	logger.SysLog.Infof("[Engine] Codename -> %s", codename)
 	db.CodeName = codename
 }
 
