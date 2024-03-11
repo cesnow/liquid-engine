@@ -15,7 +15,7 @@ require (
 	go.mongodb.org/mongo-driver v1.11.6
 	go.uber.org/zap v1.16.0
 	google.golang.org/grpc v1.61.0
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	pack.ag/amqp v0.12.5
 )
 
