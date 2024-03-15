@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	LiquidModels "github.com/cesnow/liquid-engine/liquid-models"
+	LiquidSDK "github.com/cesnow/liquid-engine/liquid-sdk"
 	"github.com/gin-gonic/gin"
 	"github.com/xxtea/xxtea-go/xxtea"
 	"net/http"
@@ -32,8 +33,9 @@ func VerifyToken() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if claims.Audience != apiUserDefaultAudience {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "header liquid-token is invalid, aud failed."})
+		
+		if claims.Audience != LiquidSDK.GetServer().CodeName {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "header liquid-token is invalid, Audience failed."})
 			c.Abort()
 			return
 		}
@@ -50,7 +52,6 @@ func VerifyToken() gin.HandlerFunc {
 }
 
 var apiUserEncryptedXxTeaKey = "-LiquidEngine|Api|User-"
-var apiUserDefaultAudience = "LiquidEngine"
 
 type LoginClaims struct {
 	Audience   string `json:"aud,omitempty"`
@@ -67,7 +68,7 @@ func GenerateToken(user *LiquidModels.LiquidUser) string {
 	twoWeeks := 14 * 24 * time.Hour
 	expired := now + int64(twoWeeks/time.Millisecond)
 	claims := LoginClaims{
-		Audience:   apiUserDefaultAudience,
+		Audience:   LiquidSDK.GetServer().CodeName,
 		ExpiresAt:  expired,
 		IssuedAt:   now,
 		AutoId:     user.AutoId,
