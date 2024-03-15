@@ -64,3 +64,10 @@ type CmdErrorResponse struct {
 	Error string `json:"error"`
 	Type  string `json:"type,omitempty"`
 }
+
+func ResponseError(code int, error string) CmdErrorResponse {
+	return CmdErrorResponse{
+		Code:  code,
+		Error: error,
+	}
+}
