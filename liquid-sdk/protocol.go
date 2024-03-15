@@ -1,12 +1,10 @@
 package LiquidSDK
 
-// Middleware
 type CmdSignedBody struct {
 	LiSign string `json:"LiSign"`
 	LiData string `json:"LiData"`
 }
 
-// Register
 type CmdRegister struct {
 	FromType  string      `json:"from_type"`
 	Account   string      `json:"account"`
@@ -14,7 +12,6 @@ type CmdRegister struct {
 	ExtraData interface{} `json:"extra_data" default:""`
 }
 
-// Login, Verify
 type CmdAccount struct {
 	FromType  string      `json:"from_type" default:""`
 	FromId    string      `json:"from_id" default:""`
@@ -28,7 +25,6 @@ type CmdAccountResponse struct {
 	InviteCode *string `json:"invite_code" bson:"invite_code"`
 }
 
-// Bind
 type CmdBind struct {
 	AutoId     string `json:"auto_id" bson:"auto_id"`
 	InviteCode string `json:"invite_code" bson:"invite_code"`
@@ -37,7 +33,6 @@ type CmdBind struct {
 	FromType   string `json:"from_type" bson:"from_type"`   // (str)third_party name
 }
 
-// Auth
 type CmdAuth struct {
 	AutoId     *string `json:"auto_id" bson:"auto_id"`
 	InviteCode *string `json:"invite_code" bson:"invite_code"`
@@ -49,7 +44,6 @@ type CmdAuthResponse struct {
 	LiquidToken *string `json:"liquid_token" bson:"liquid_token"`
 }
 
-// Command
 type CmdCommand struct {
 	LiquidId    *string     `json:"liquid_id" bson:"liquid_id"`
 	LiquidToken *string     `json:"liquid_token" bson:"liquid_token"`
@@ -65,4 +59,8 @@ type CmdCommandResponse struct {
 	CmdSn   *string     `json:"cmd_sn"`
 }
 
-// Direct Command
+type CmdErrorResponse struct {
+	Code  int    `json:"code"`
+	Error string `json:"error"`
+	Type  string `json:"type,omitempty"`
+}

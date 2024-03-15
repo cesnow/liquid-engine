@@ -35,9 +35,18 @@ func RouteDirect(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
 	runCommandData := feature.RunDirectCommand(command)
 	result.CmdData = runCommandData
-
 	result.CmdSn = command.CmdSn
-	c.String(http.StatusOK, middlewares.GetLiquidResult(result))
+
+	if result.CmdData != nil {
+		if _, ok := result.CmdData.(*LiquidSDK.CmdErrorResponse); ok {
+			c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(result))
+			return
+		}
+		c.String(http.StatusOK, middlewares.GetLiquidResult(result))
+		return
+	}
+	c.Status(http.StatusInternalServerError)
 }
