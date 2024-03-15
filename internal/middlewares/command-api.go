@@ -33,7 +33,7 @@ func VerifyToken() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		
+
 		if claims.Audience != LiquidSDK.GetServer().CodeName {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "header liquid-token is invalid, Audience failed."})
 			c.Abort()

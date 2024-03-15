@@ -1,6 +1,7 @@
 package foundation
 
 import (
+	"encoding/json"
 	LiquidSDK "github.com/cesnow/liquid-engine/liquid-sdk"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,17 @@ func RouteApiDirect(c *gin.Context) {
 	cmdName := c.Param("CmdName")
 	rawBody, _ := c.GetRawData()
 
+	var cmdData interface{}
+	err := json.Unmarshal(rawBody, &cmdData)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": 1410,
+			"error":  "Invalid Request",
+		})
+		c.Abort()
+		return
+	}
+
 	command := &LiquidSDK.CmdCommand{
 		LiquidId:    nil,
 		LiquidToken: nil,
@@ -20,7 +32,7 @@ func RouteApiDirect(c *gin.Context) {
 		CmdId:       &featureId,
 		CmdSn:       nil,
 		CmdName:     &cmdName,
-		CmdData:     string(rawBody),
+		CmdData:     cmdData,
 	}
 
 	feature := LiquidSDK.GetServer().GetFeature(*command.CmdId)
