@@ -18,7 +18,11 @@ func RouteRegister(c *gin.Context) {
 
 	if command.FromType == "" {
 		logger.SysLog.Errorf("[CMD][Register] Create Member Failed, From Type is empty")
-		result := gin.H{"registerStatus": 0, "error": "from_type is empty"}
+		result := gin.H{
+			"registerStatus": 0,
+			"code":           1101,
+			"error":          "from_type is empty",
+		}
 		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(result))
 		c.Abort()
 		return
@@ -26,7 +30,11 @@ func RouteRegister(c *gin.Context) {
 
 	if command.Account == "" || command.Password == "" {
 		logger.SysLog.Errorf("[CMD][Register] Create Member Failed, Account/Password is empty")
-		result := gin.H{"registerStatus": 0, "error": "account/password is empty"}
+		result := gin.H{
+			"registerStatus": 0,
+			"code":           1102,
+			"error":          "account/password is empty",
+		}
 		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(result))
 		c.Abort()
 		return
@@ -36,6 +44,7 @@ func RouteRegister(c *gin.Context) {
 	if member == nil {
 		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
 			"registerStatus": 0,
+			"code":           1103,
 			"error":          "member system is not defined : " + command.FromType,
 		}))
 		c.Abort()

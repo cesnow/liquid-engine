@@ -29,8 +29,8 @@ func RouteCommand(c *gin.Context) {
 	if command.LiquidId == nil || command.LiquidToken == nil {
 		logger.SysLog.Warnf("[CMD][Command] ID & Token is empty !")
 		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(gin.H{
-			"status": 4001,
-			"error":  fmt.Sprintf("ID & Token is empty !"),
+			"code":  1401,
+			"error": fmt.Sprintf("ID & Token is empty !"),
 		}))
 		c.Abort()
 		return
@@ -48,8 +48,8 @@ func RouteCommand(c *gin.Context) {
 	if authTokenErr != nil || liquidToken != *command.LiquidToken {
 		logger.SysLog.Warnf("[CMD][Command] Data Verify Failed")
 		c.String(http.StatusUnauthorized, middlewares.GetLiquidResult(gin.H{
-			"status": 4002,
-			"error":  fmt.Sprintf("data verify failed !"),
+			"code":  1402,
+			"error": fmt.Sprintf("data verify failed !"),
 		}))
 		c.Abort()
 		return
@@ -65,8 +65,8 @@ func RouteCommand(c *gin.Context) {
 	feature := LiquidSDK.GetServer().GetFeature(*command.CmdId)
 	if feature == nil {
 		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
-			"status": 4004,
-			"error":  fmt.Sprintf("feature(cmd_id) not found !"),
+			"code":  1404,
+			"error": fmt.Sprintf("feature(cmd_id) not found !"),
 		}))
 		c.Abort()
 		return

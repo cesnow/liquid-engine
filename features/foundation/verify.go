@@ -24,7 +24,10 @@ func RouteVerify(c *gin.Context) {
 
 	if command.FromId == "" {
 		logger.SysLog.Warnf("[CMD][Verify] FromId is Empty, %+v", command)
-		c.Status(http.StatusBadRequest)
+		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(gin.H{
+			"code":  1701,
+			"error": "from_id is empty",
+		}))
 	}
 
 	var liquidUser *LiquidModels.LiquidUser

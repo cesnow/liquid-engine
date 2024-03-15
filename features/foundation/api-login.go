@@ -15,7 +15,10 @@ func RouteApiLogin(c *gin.Context) {
 	rawBody, _ := c.GetRawData()
 	err := json.Unmarshal(rawBody, &command)
 	if err != nil {
-		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(gin.H{"data": "Invalid Request"}))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":  1211,
+			"error": "Invalid Request",
+		})
 		return
 	}
 
@@ -38,7 +41,10 @@ func RouteApiLogin(c *gin.Context) {
 	} else {
 
 		if command.FromId == "" || command.FromToken == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "from_id or from_token is empty"})
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code":  1212,
+				"error": "from_id or from_token is empty",
+			})
 			return
 		}
 
@@ -64,6 +70,7 @@ func RouteApiLogin(c *gin.Context) {
 
 		if !resultValidate {
 			c.JSON(http.StatusUnauthorized, gin.H{
+				"code":  1213,
 				"error": errorMessage,
 			})
 			return
@@ -78,6 +85,7 @@ func RouteApiLogin(c *gin.Context) {
 
 	if liquidUser.IsDeactivate == true {
 		c.JSON(http.StatusForbidden, gin.H{
+			"code":  1214,
 			"error": "user is deactivated",
 		})
 		return
@@ -93,6 +101,7 @@ func RouteApiLogin(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusInternalServerError, gin.H{
+		"code":  1215,
 		"error": "something went wrong !",
 	})
 

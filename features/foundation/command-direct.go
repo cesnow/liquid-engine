@@ -29,7 +29,7 @@ func RouteDirect(c *gin.Context) {
 	feature := LiquidSDK.GetServer().GetFeature(*command.CmdId)
 	if feature == nil {
 		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
-			"status": 5001,
+			"status": 1501,
 			"error":  fmt.Sprintf("feature(cmd_id) not found !"),
 		}))
 		c.Abort()

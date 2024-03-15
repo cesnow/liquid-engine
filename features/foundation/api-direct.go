@@ -25,7 +25,10 @@ func RouteApiDirect(c *gin.Context) {
 
 	feature := LiquidSDK.GetServer().GetFeature(*command.CmdId)
 	if feature == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Feature Not Found"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":  1511,
+			"error": "Feature Not Found",
+		})
 		c.Abort()
 		return
 	}

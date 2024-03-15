@@ -38,7 +38,10 @@ func RouteLogin(c *gin.Context) {
 	} else {
 
 		if command.FromId == "" || command.FromToken == "" {
-			c.String(http.StatusBadRequest, middlewares.GetLiquidResult(gin.H{"data": "from_id or from_token is empty"}))
+			c.String(http.StatusBadRequest, middlewares.GetLiquidResult(gin.H{
+				"code":  1201,
+				"error": "from_id or from_token is empty",
+			}))
 			return
 		}
 
@@ -64,7 +67,8 @@ func RouteLogin(c *gin.Context) {
 
 		if !resultValidate {
 			c.String(http.StatusUnauthorized, middlewares.GetLiquidResult(gin.H{
-				"data": errorMessage,
+				"code":  1202,
+				"error": errorMessage,
 			}))
 			return
 		}
@@ -77,7 +81,10 @@ func RouteLogin(c *gin.Context) {
 	}
 
 	if liquidUser.IsDeactivate == true {
-		c.String(http.StatusForbidden, middlewares.GetLiquidResult(result))
+		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
+			"code":  1203,
+			"error": "user is deactivated",
+		}))
 		return
 	}
 
