@@ -3,6 +3,7 @@ package system
 import (
 	"github.com/cesnow/liquid-engine/internal/feature-register"
 	LiquidSDK "github.com/cesnow/liquid-engine/liquid-sdk"
+	"github.com/cesnow/liquid-engine/options"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,9 +13,10 @@ type EchoSystem struct {
 
 func NewEchoSystem() LiquidSDK.CommandSystem {
 	echo := new(EchoSystem)
-	echo.Register("echo", echo.Echo)
-	echo.Register("ping", echo.Ping)
-	echo.RegisterDirect("direct", echo.Direct)
+	echo.Register("echo", echo.Echo, options.Command().WithHttpSupport())
+	echo.Register("ping", echo.Ping, options.Command().WithHttpSupport())
+	echo.RegisterDirect("direct", echo.Direct, options.Command().WithHttpSupport())
+	echo.Register("error-test", echo.ErrorTest, options.Command().WithHttpSupport())
 	return echo
 }
 
@@ -28,6 +30,13 @@ func (echo *EchoSystem) Ping(LiquidID string, CmdData LiquidSDK.CommandRequest) 
 
 func (echo *EchoSystem) Direct(LiquidID string, CmdData LiquidSDK.CommandRequest) interface{} {
 	return gin.H{"result": "direct"}
+}
+
+func (echo *EchoSystem) ErrorTest(LiquidID string, CmdData LiquidSDK.CommandRequest) interface{} {
+	return LiquidSDK.CmdErrorResponse{
+		Code:  500,
+		Error: "Error Test",
+	}
 }
 
 func init() {

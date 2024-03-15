@@ -2,6 +2,7 @@ package LiquidSDK
 
 import (
 	"github.com/cesnow/liquid-engine/logger"
+	"github.com/cesnow/liquid-engine/options"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -88,20 +89,28 @@ func (system *CommandSDK) RunHttpCommand(c *gin.Context, data *CmdCommand) {
 	return
 }
 
-func (system *CommandSDK) Register(name string, f func(string, CommandRequest) interface{}) {
+func (system *CommandSDK) Register(name string, f func(string, CommandRequest) interface{}, opts ...*options.CommandOptions) {
+	mergeOpts := options.MergeCommandOptions(opts...)
 	if system.functionDict == nil {
 		system.functionDict = make(map[string]func(string, CommandRequest) interface{})
 	}
 	system.functionDict[name] = f
 	logger.SysLog.Debugf("[Engine][OperatorRegister] `%s` Registered", name)
+	if *mergeOpts.HttpSupport {
+		system.RegisterHttp(name, CommandToHttpAdapter(f))
+	}
 }
 
-func (system *CommandSDK) RegisterDirect(name string, f func(string, CommandRequest) interface{}) {
+func (system *CommandSDK) RegisterDirect(name string, f func(string, CommandRequest) interface{}, opts ...*options.CommandOptions) {
+	mergeOpts := options.MergeCommandOptions(opts...)
 	if system.drtFunctionDict == nil {
 		system.drtFunctionDict = make(map[string]func(string, CommandRequest) interface{})
 	}
 	system.drtFunctionDict[name] = f
 	logger.SysLog.Debugf("[Engine][OperatorRegisterDirect] `%s` Registered", name)
+	if *mergeOpts.HttpSupport {
+		system.RegisterHttpDirect(name, CommandToHttpAdapter(f))
+	}
 }
 
 func (system *CommandSDK) RegisterHttpDirect(name string, f func(*gin.Context, CommandRequest)) {
