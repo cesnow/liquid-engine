@@ -18,14 +18,16 @@ func RouteApiCommand(c *gin.Context) {
 	rawBody, _ := c.GetRawData()
 
 	var cmdData interface{}
-	err := json.Unmarshal(rawBody, &cmdData)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status": 1410,
-			"error":  "Invalid Request",
-		})
-		c.Abort()
-		return
+	if rawBody != nil {
+		err := json.Unmarshal(rawBody, &cmdData)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status": 1410,
+				"error":  "Invalid Request",
+			})
+			c.Abort()
+			return
+		}
 	}
 
 	command := &LiquidSDK.CmdCommand{
