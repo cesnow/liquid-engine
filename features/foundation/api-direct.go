@@ -15,7 +15,7 @@ func RouteApiDirect(c *gin.Context) {
 	rawBody, _ := c.GetRawData()
 
 	var cmdData interface{}
-	if rawBody != nil {
+	if len(rawBody) > 0 {
 		err := json.Unmarshal(rawBody, &cmdData)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
