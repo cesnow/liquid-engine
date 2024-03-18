@@ -15,34 +15,29 @@ func VerifyToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.GetHeader("liquid-token")
 		if header == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "header liquid-token is empty"})
-			c.Abort()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_HEADER_REQUIRED"})
 			return
 		}
 		decoded, err := base64.URLEncoding.DecodeString(header)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "header liquid-token is invalid"})
-			c.Abort()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_HEADER_INVALID"})
 			return
 		}
 		decrypted := xxtea.Decrypt(decoded, []byte(apiUserEncryptedXxTeaKey))
 		var claims *LoginClaims
 		err = json.Unmarshal(decrypted, &claims)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "header liquid-token is invalid"})
-			c.Abort()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_HEADER_INVALID"})
 			return
 		}
 
 		if claims.Audience != LiquidSDK.GetServer().CodeName {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "header liquid-token is invalid, Audience failed."})
-			c.Abort()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_AUDIENCE_INVALID"})
 			return
 		}
 
 		if claims.ExpiresAt < time.Now().UnixNano()/int64(time.Millisecond) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "token expired."})
-			c.Abort()
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "LIQUID_TOKEN_EXPIRED"})
 			return
 		}
 

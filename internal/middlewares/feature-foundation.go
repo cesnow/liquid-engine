@@ -21,16 +21,14 @@ func GetLiquidData() gin.HandlerFunc {
 		RawDataBody, GetRawBodyErr := c.GetRawData()
 		if GetRawBodyErr != nil {
 			logger.SysLog.Errorf("[Engine][Middleware] Get Liquid Data Failed, %s", GetRawBodyErr)
-			c.Status(http.StatusBadRequest)
-			c.Abort()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "INVALID_REQUEST"})
 			return
 		}
 
 		DataBody, decodeBodyErr := base64.StdEncoding.DecodeString(string(RawDataBody))
 		if decodeBodyErr != nil {
 			logger.SysLog.Errorf("[Engine][Middleware] Decode Liquid Data Failed, %s", decodeBodyErr)
-			c.Status(http.StatusBadRequest)
-			c.Abort()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "INVALID_REQUEST"})
 			return
 		}
 
@@ -38,8 +36,7 @@ func GetLiquidData() gin.HandlerFunc {
 		DataUnmarshalError := json.Unmarshal(DataBody, &StructureLiquidData)
 		if DataUnmarshalError != nil {
 			logger.SysLog.Errorf("[Engine][Middleware] Unmarshal Liquid Data Failed, %s", DataUnmarshalError)
-			c.Status(http.StatusBadRequest)
-			c.Abort()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "INVALID_REQUEST"})
 			return
 		}
 
@@ -50,16 +47,14 @@ func GetLiquidData() gin.HandlerFunc {
 		if StructureLiquidData.LiSign != DataVerifyHexDigest {
 			logger.SysLog.Error("[Engine][Middleware] Verify Liquid Data Failed")
 
-			c.Status(http.StatusBadRequest)
-			c.Abort()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "INVALID_REQUEST"})
 			return
 		}
 
 		DecodedCommandData, DecodedCommandDataError := base64.StdEncoding.DecodeString(StructureLiquidData.LiData)
 		if DecodedCommandDataError != nil {
 			logger.SysLog.Errorf("[Engine][Middleware] Decode Command Liquid Data Failed, %s", DecodedCommandDataError)
-			c.Status(http.StatusBadRequest)
-			c.Abort()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "INVALID_REQUEST"})
 			return
 		}
 
