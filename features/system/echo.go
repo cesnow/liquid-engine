@@ -33,10 +33,7 @@ func (echo *EchoSystem) Direct(LiquidID string, CmdData LiquidSDK.CommandRequest
 }
 
 func (echo *EchoSystem) ErrorTest(LiquidID string, CmdData LiquidSDK.CommandRequest) interface{} {
-	return LiquidSDK.CmdErrorResponse{
-		Code:  500,
-		Error: "Error Test",
-	}
+	return LiquidSDK.CmdErrorResponse{Error: "TEST_ERROR"}
 }
 
 func init() {
