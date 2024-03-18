@@ -16,11 +16,13 @@ func VerifyToken() gin.HandlerFunc {
 		header := c.GetHeader("liquid-token")
 		if header == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_HEADER_REQUIRED"})
+			c.Abort()
 			return
 		}
 		decoded, err := base64.URLEncoding.DecodeString(header)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_HEADER_INVALID"})
+			c.Abort()
 			return
 		}
 		decrypted := xxtea.Decrypt(decoded, []byte(apiUserEncryptedXxTeaKey))
@@ -28,16 +30,19 @@ func VerifyToken() gin.HandlerFunc {
 		err = json.Unmarshal(decrypted, &claims)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_HEADER_INVALID"})
+			c.Abort()
 			return
 		}
 
 		if claims.Audience != LiquidSDK.GetServer().CodeName {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_AUDIENCE_INVALID"})
+			c.Abort()
 			return
 		}
 
 		if claims.ExpiresAt < time.Now().UnixNano()/int64(time.Millisecond) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "LIQUID_TOKEN_EXPIRED"})
+			c.Abort()
 			return
 		}
 
