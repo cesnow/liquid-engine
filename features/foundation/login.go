@@ -16,11 +16,6 @@ func RouteLogin(c *gin.Context) {
 	_ = json.Unmarshal(c.MustGet("CommandData").([]byte), &command)
 	logger.SysLog.Debugf("[CMD][Login] %+v", command)
 
-	result := &LiquidSDK.CmdAccountResponse{
-		AutoId:     nil,
-		InviteCode: nil,
-	}
-
 	var liquidUser *LiquidModels.LiquidUser
 
 	if command.FromType == "guest" {
@@ -31,17 +26,18 @@ func RouteLogin(c *gin.Context) {
 			liquidUser = LiquidModels.CreateLiquidUser(command.FromType, "")
 		} else {
 			if liquidUser.FromType != "guest" || inviteCode != liquidUser.InviteCode {
-				c.String(http.StatusOK, middlewares.GetLiquidResult(result))
+				c.String(http.StatusUnauthorized, middlewares.GetLiquidResult(
+					LiquidSDK.ResponseError("GUEST_FROM_TOKEN_INVALID"),
+				))
 				return
 			}
 		}
 	} else {
 
 		if command.FromId == "" || command.FromToken == "" {
-			c.String(http.StatusBadRequest, middlewares.GetLiquidResult(gin.H{
-				"code":  1201,
-				"error": "from_id or from_token is empty",
-			}))
+			c.String(http.StatusBadRequest, middlewares.GetLiquidResult(
+				LiquidSDK.ResponseError("INVALID_REQUEST_FROM_ID_OR_FROM_TOKEN")),
+			)
 			return
 		}
 
@@ -51,7 +47,7 @@ func RouteLogin(c *gin.Context) {
 
 		member := LiquidSDK.GetServer().GetMemberSystem(command.FromType)
 		if member == nil {
-			errorMessage = "member system is not defined : " + command.FromToken
+			errorMessage = "MEMBER_SYSTEM_NOT_DEFINED:" + command.FromToken
 		} else {
 			overrideFromId := ""
 			resultValidate, errorMessage, overrideFromId = member.Validate(
@@ -66,10 +62,9 @@ func RouteLogin(c *gin.Context) {
 		}
 
 		if !resultValidate {
-			c.String(http.StatusUnauthorized, middlewares.GetLiquidResult(gin.H{
-				"code":  1202,
-				"error": errorMessage,
-			}))
+			c.String(http.StatusUnauthorized, middlewares.GetLiquidResult(
+				LiquidSDK.ResponseError(errorMessage),
+			))
 			return
 		}
 
@@ -81,19 +76,25 @@ func RouteLogin(c *gin.Context) {
 	}
 
 	if liquidUser.IsDeactivate == true {
-		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
-			"code":  1203,
-			"error": "user is deactivated",
-		}))
+		c.String(http.StatusForbidden, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("USER_DEACTIVATED"),
+		))
 		return
 	}
 
 	// TODO: BlockSystem (Unsupported)
 
 	if liquidUser != nil {
-		result.AutoId = &liquidUser.AutoId
-		result.InviteCode = &liquidUser.InviteCode
+		result := &LiquidSDK.CmdAccountResponse{
+			AutoId:     &liquidUser.AutoId,
+			InviteCode: &liquidUser.InviteCode,
+		}
+		c.String(http.StatusOK, middlewares.GetLiquidResult(result))
+		return
 	}
 
-	c.String(http.StatusOK, middlewares.GetLiquidResult(result))
+	c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(
+		LiquidSDK.ResponseError("USER_NOT_FOUND"),
+	))
+
 }

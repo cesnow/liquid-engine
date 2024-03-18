@@ -22,10 +22,9 @@ func RouteBind(c *gin.Context) {
 	liquidUser := LiquidModels.FindLiquidUserByAutoId(command.AutoId, command.InviteCode)
 
 	if liquidUser == nil {
-		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
-			"code":  1601,
-			"error": "user is not found",
-		}))
+		c.String(http.StatusNotFound, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("USER_NOT_FOUND"),
+		))
 		return
 	}
 
@@ -33,10 +32,9 @@ func RouteBind(c *gin.Context) {
 
 	if bindErr != nil {
 		logger.SysLog.Warnf("[CMD][Bind] Duplicate Bind Failed, %s", bindErr)
-		c.String(http.StatusOK, middlewares.GetLiquidResult(gin.H{
-			"code":  1602,
-			"error": "account is already bind",
-		}))
+		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("USER_ALREADY_BIND"),
+		))
 		return
 	}
 

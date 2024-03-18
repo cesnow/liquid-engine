@@ -21,18 +21,11 @@ func RouteCommand(c *gin.Context) {
 
 	c.Set("GIN_MSG", fmt.Sprintf("(sn: %s, id: %s, name: %s)", *command.CmdSn, *command.CmdId, *command.CmdName))
 
-	result := &LiquidSDK.CmdCommandResponse{
-		CmdData: nil,
-		CmdSn:   nil,
-	}
-
 	if command.LiquidId == nil || command.LiquidToken == nil {
 		logger.SysLog.Warnf("[CMD][Command] ID & Token is empty !")
-		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(gin.H{
-			"code":  1401,
-			"error": fmt.Sprintf("ID & Token is empty !"),
-		}))
-		c.Abort()
+		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("INVALID_REQUEST_LIQUID_ID_OR_LIQUID_TOKEN"),
+		))
 		return
 	}
 
@@ -47,11 +40,9 @@ func RouteCommand(c *gin.Context) {
 
 	if authTokenErr != nil || liquidToken != *command.LiquidToken {
 		logger.SysLog.Warnf("[CMD][Command] Data Verify Failed")
-		c.String(http.StatusUnauthorized, middlewares.GetLiquidResult(gin.H{
-			"code":  1402,
-			"error": fmt.Sprintf("data verify failed !"),
-		}))
-		c.Abort()
+		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("COMMAND_DATA_VERIFY_FAILED"),
+		))
 		return
 	}
 
@@ -64,17 +55,17 @@ func RouteCommand(c *gin.Context) {
 
 	feature := LiquidSDK.GetServer().GetFeature(*command.CmdId)
 	if feature == nil {
-		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
-			"code":  1404,
-			"error": fmt.Sprintf("feature(cmd_id) not found !"),
-		}))
-		c.Abort()
+		c.String(http.StatusNotFound, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("FEATURE_NOT_FOUND"),
+		))
 		return
 	}
 	runCommandData := feature.RunCommand(command)
-	result.CmdData = runCommandData
-	result.CmdSn = command.CmdSn
 
+	result := &LiquidSDK.CmdCommandResponse{
+		CmdData: runCommandData,
+		CmdSn:   command.CmdSn,
+	}
 	if result.CmdData != nil {
 		if _, ok := result.CmdData.(LiquidSDK.CmdErrorResponse); ok {
 			c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(result))
@@ -83,5 +74,7 @@ func RouteCommand(c *gin.Context) {
 		c.String(http.StatusOK, middlewares.GetLiquidResult(result))
 		return
 	}
-	c.Status(http.StatusInternalServerError)
+	c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(
+		LiquidSDK.ResponseError("NO_RESPONSE_DATA"),
+	))
 }

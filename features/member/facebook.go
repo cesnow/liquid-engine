@@ -11,7 +11,7 @@ type FacebookMemberSystem struct {
 }
 
 func (fb *FacebookMemberSystem) Register(fromType, account, password, platform string, extraArgs interface{}) (status int, error string) {
-	err := errors.New("facebook account can't register by server, visit: https://www.facebook.com/")
+	err := errors.New("REGISTER_NOT_SUPPORT:facebook account can't register by server, visit: https://www.facebook.com/")
 	return 0, err.Error()
 }
 

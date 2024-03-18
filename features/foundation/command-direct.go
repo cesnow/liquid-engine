@@ -17,29 +17,28 @@ func RouteDirect(c *gin.Context) {
 	unmarshalErr := json.Unmarshal(c.MustGet("CommandData").([]byte), &command)
 	if unmarshalErr != nil {
 		logger.SysLog.Warnf("[CMD][Command] Unmarshal Command Data Failed, %s", unmarshalErr)
+		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("INVALID_REQUEST")),
+		)
+		return
 	}
 
 	c.Set("GIN_MSG", fmt.Sprintf("(sn: %s, id: %s, name: %s)", *command.CmdSn, *command.CmdId, *command.CmdName))
 
-	result := &LiquidSDK.CmdCommandResponse{
-		CmdData: nil,
-		CmdSn:   nil,
-	}
-
 	feature := LiquidSDK.GetServer().GetFeature(*command.CmdId)
 	if feature == nil {
-		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
-			"status": 1501,
-			"error":  fmt.Sprintf("feature(cmd_id) not found !"),
-		}))
-		c.Abort()
+		c.String(http.StatusNotFound, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("FEATURE_NOT_FOUND")),
+		)
 		return
 	}
 
 	runCommandData := feature.RunDirectCommand(command)
-	result.CmdData = runCommandData
-	result.CmdSn = command.CmdSn
 
+	result := &LiquidSDK.CmdCommandResponse{
+		CmdData: runCommandData,
+		CmdSn:   command.CmdSn,
+	}
 	if result.CmdData != nil {
 		if _, ok := result.CmdData.(LiquidSDK.CmdErrorResponse); ok {
 			c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(result))
@@ -48,5 +47,7 @@ func RouteDirect(c *gin.Context) {
 		c.String(http.StatusOK, middlewares.GetLiquidResult(result))
 		return
 	}
-	c.Status(http.StatusInternalServerError)
+	c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(
+		LiquidSDK.ResponseError("NO_RESPONSE_DATA"),
+	))
 }

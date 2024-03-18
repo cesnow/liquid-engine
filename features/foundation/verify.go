@@ -17,17 +17,11 @@ func RouteVerify(c *gin.Context) {
 	_ = json.Unmarshal(c.MustGet("CommandData").([]byte), &command)
 	logger.SysLog.Debugf("[CMD][Login] %+v", command)
 
-	result := &LiquidSDK.CmdAccountResponse{
-		AutoId:     nil,
-		InviteCode: nil,
-	}
-
 	if command.FromId == "" {
 		logger.SysLog.Warnf("[CMD][Verify] FromId is Empty, %+v", command)
-		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(gin.H{
-			"code":  1701,
-			"error": "from_id is empty",
-		}))
+		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("INVALID_REQUEST_FROM_ID")),
+		)
 	}
 
 	var liquidUser *LiquidModels.LiquidUser
@@ -41,10 +35,15 @@ func RouteVerify(c *gin.Context) {
 	}
 
 	if liquidUser != nil {
-		result.AutoId = &liquidUser.AutoId
-		result.InviteCode = &liquidUser.InviteCode
+		result := &LiquidSDK.CmdAccountResponse{
+			AutoId:     &liquidUser.AutoId,
+			InviteCode: &liquidUser.InviteCode,
+		}
+		c.String(http.StatusOK, middlewares.GetLiquidResult(result))
+		return
 	}
 
-	c.String(http.StatusOK, middlewares.GetLiquidResult(result))
-
+	c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(
+		LiquidSDK.ResponseError("USER_NOT_FOUND"),
+	))
 }

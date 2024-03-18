@@ -11,7 +11,7 @@ type LineMemberSystem struct {
 }
 
 func (fb *LineMemberSystem) Register(fromType, account, password, platform string, extraArgs interface{}) (status int, error string) {
-	err := errors.New("line account can't register by server, visit: https://www.line.com/")
+	err := errors.New("REGISTER_NOT_SUPPORT:line account can't register by server, visit: https://www.line.com/")
 	return 0, err.Error()
 }
 

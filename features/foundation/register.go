@@ -2,6 +2,7 @@ package foundation
 
 import (
 	"encoding/json"
+	"fmt"
 	LiquidSDK "github.com/cesnow/liquid-engine/liquid-sdk"
 
 	"github.com/cesnow/liquid-engine/internal/middlewares"
@@ -18,36 +19,26 @@ func RouteRegister(c *gin.Context) {
 
 	if command.FromType == "" {
 		logger.SysLog.Errorf("[CMD][Register] Create Member Failed, From Type is empty")
-		result := gin.H{
-			"registerStatus": 0,
-			"code":           1101,
-			"error":          "from_type is empty",
-		}
-		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(result))
-		c.Abort()
+		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("INVALID_REQUEST_FROM_TYPE"),
+		))
 		return
 	}
 
 	if command.Account == "" || command.Password == "" {
 		logger.SysLog.Errorf("[CMD][Register] Create Member Failed, Account/Password is empty")
-		result := gin.H{
-			"registerStatus": 0,
-			"code":           1102,
-			"error":          "account/password is empty",
-		}
-		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(result))
-		c.Abort()
+		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("INVALID_REQUEST_ACCOUNT_OR_PASSWORD"),
+		))
 		return
 	}
 
 	member := LiquidSDK.GetServer().GetMemberSystem(command.FromType)
 	if member == nil {
-		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
-			"registerStatus": 0,
-			"code":           1103,
-			"error":          "member system is not defined : " + command.FromType,
-		}))
-		c.Abort()
+		c.String(http.StatusForbidden, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError(fmt.Sprintf("MEMBER_SYSTEM_NOT_DEFINED:%s", command.FromType)),
+		))
+		return
 	}
 
 	resultStatus, errorMessage := member.Register(
@@ -57,6 +48,13 @@ func RouteRegister(c *gin.Context) {
 		"",
 		command.ExtraData,
 	)
-	result := gin.H{"registerStatus": resultStatus, "error": errorMessage}
-	c.String(http.StatusOK, middlewares.GetLiquidResult(result))
+
+	if errorMessage != "" {
+		c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError(errorMessage),
+		))
+		return
+	}
+
+	c.String(http.StatusOK, middlewares.GetLiquidResult(gin.H{"registerStatus": resultStatus}))
 }

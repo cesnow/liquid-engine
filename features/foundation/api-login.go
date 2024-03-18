@@ -15,10 +15,10 @@ func RouteApiLogin(c *gin.Context) {
 	rawBody, _ := c.GetRawData()
 	err := json.Unmarshal(rawBody, &command)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":  1211,
-			"error": "Invalid Request",
-		})
+		c.JSON(
+			http.StatusBadRequest,
+			LiquidSDK.ResponseError("INVALID_REQUEST"),
+		)
 		return
 	}
 
@@ -41,10 +41,10 @@ func RouteApiLogin(c *gin.Context) {
 	} else {
 
 		if command.FromId == "" || command.FromToken == "" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"code":  1212,
-				"error": "from_id or from_token is empty",
-			})
+			c.JSON(
+				http.StatusBadRequest,
+				LiquidSDK.ResponseError("FROM_ID_OR_FROM_TOKEN_IS_REQUIRED"),
+			)
 			return
 		}
 
@@ -69,10 +69,7 @@ func RouteApiLogin(c *gin.Context) {
 		}
 
 		if !resultValidate {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"code":  1213,
-				"error": errorMessage,
-			})
+			c.JSON(http.StatusUnauthorized, LiquidSDK.ResponseError(errorMessage))
 			return
 		}
 
@@ -84,10 +81,7 @@ func RouteApiLogin(c *gin.Context) {
 	}
 
 	if liquidUser.IsDeactivate == true {
-		c.JSON(http.StatusForbidden, gin.H{
-			"code":  1214,
-			"error": "user is deactivated",
-		})
+		c.JSON(http.StatusForbidden, LiquidSDK.ResponseError("USER_DEACTIVATED"))
 		return
 	}
 
@@ -100,9 +94,6 @@ func RouteApiLogin(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusInternalServerError, gin.H{
-		"code":  1215,
-		"error": "something went wrong !",
-	})
+	c.JSON(http.StatusInternalServerError, LiquidSDK.ResponseError("INTERNAL_SERVER_ERROR"))
 
 }

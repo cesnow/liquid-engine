@@ -18,11 +18,10 @@ func RouteApiDirect(c *gin.Context) {
 	if len(rawBody) > 0 {
 		err := json.Unmarshal(rawBody, &cmdData)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"status": 1510,
-				"error":  "Invalid Request",
-			})
-			c.Abort()
+			c.JSON(
+				http.StatusBadRequest,
+				LiquidSDK.ResponseError("INVALID_REQUEST"),
+			)
 			return
 		}
 	}
@@ -39,11 +38,10 @@ func RouteApiDirect(c *gin.Context) {
 
 	feature := LiquidSDK.GetServer().GetFeature(*command.CmdId)
 	if feature == nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":  1511,
-			"error": "Feature Not Found",
-		})
-		c.Abort()
+		c.JSON(
+			http.StatusNotFound,
+			LiquidSDK.ResponseError("FEATURE_NOT_FOUND"),
+		)
 		return
 	}
 	feature.RunHttpDirectCommand(c, command)

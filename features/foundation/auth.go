@@ -22,13 +22,10 @@ func RouteAuth(c *gin.Context) {
 	_ = json.Unmarshal(c.MustGet("CommandData").([]byte), &command)
 	logger.SysLog.Debugf("[CMD][Auth] %+v", command)
 
-	result := &LiquidSDK.CmdAuthResponse{}
-
 	if command.AutoId == nil || command.InviteCode == nil {
-		c.String(http.StatusUnauthorized, middlewares.GetLiquidResult(gin.H{
-			"code":  1301,
-			"error": "auto_id or invite_code is empty",
-		}))
+		c.String(http.StatusBadRequest, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("INVALID_REQUEST_AUTO_ID_OR_INVITE_CODE")),
+		)
 		return
 	}
 
@@ -39,18 +36,16 @@ func RouteAuth(c *gin.Context) {
 
 	liquidUser := LiquidModels.FindLiquidUserByAutoId(*command.AutoId, *command.InviteCode)
 	if liquidUser == nil {
-		c.String(http.StatusUnauthorized, middlewares.GetLiquidResult(gin.H{
-			"code":  1302,
-			"error": "user is not found",
-		}))
+		c.String(http.StatusNotFound, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("USER_NOT_FOUND"),
+		))
 		return
 	}
 
 	if liquidUser.IsDeactivate == true {
-		c.String(http.StatusForbidden, middlewares.GetLiquidResult(gin.H{
-			"code":  1303,
-			"error": "user is deactivated",
-		}))
+		c.String(http.StatusForbidden, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("USER_DEACTIVATED"),
+		))
 		return
 	}
 
@@ -69,16 +64,16 @@ func RouteAuth(c *gin.Context) {
 	)
 	if setUserTokenErr != nil {
 		logger.SysLog.Warnf("[CMD][Auth] Set User Token Failed, %s", setUserTokenErr)
-		c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(gin.H{
-			"code":  1304,
-			"error": "set user token failed",
-		}))
+		c.String(http.StatusInternalServerError, middlewares.GetLiquidResult(
+			LiquidSDK.ResponseError("SET_USER_TOKEN_FAILED"),
+		))
 		return
 	}
 
-	result.LiquidId = &liquidUser.AutoId
-	result.LiquidToken = &liquidToken
-
+	result := &LiquidSDK.CmdAuthResponse{
+		LiquidId:    &liquidUser.AutoId,
+		LiquidToken: &liquidToken,
+	}
 	c.String(http.StatusOK, middlewares.GetLiquidResult(result))
 
 }
