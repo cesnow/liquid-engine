@@ -62,9 +62,3 @@ type CmdCommandResponse struct {
 type CmdErrorResponse struct {
 	Error string `json:"error"`
 }
-
-func ResponseError(error string) CmdErrorResponse {
-	return CmdErrorResponse{
-		Error: error,
-	}
-}
