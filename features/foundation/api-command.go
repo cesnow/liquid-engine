@@ -10,9 +10,6 @@ import (
 
 func RouteApiCommand(c *gin.Context) {
 
-	cmdLiquidUser, _ := c.Get("LiquidUser")
-	loginClaims := cmdLiquidUser.(*middlewares.LoginClaims)
-
 	featureId := c.Param("FeatureId")
 	cmdName := c.Param("CmdName")
 	rawBody, _ := c.GetRawData()
@@ -29,16 +26,7 @@ func RouteApiCommand(c *gin.Context) {
 		}
 	}
 
-	command := &LiquidSDK.CmdCommand{
-		LiquidId: &loginClaims.AutoId,
-		Platform: nil,
-		CmdId:    &featureId,
-		CmdSn:    nil,
-		CmdName:  &cmdName,
-		CmdData:  cmdData,
-	}
-
-	feature := LiquidSDK.GetServer().GetFeature(*command.CmdId)
+	feature := LiquidSDK.GetServer().GetFeature(featureId)
 	if feature == nil {
 		c.JSON(
 			http.StatusNotFound,
@@ -46,6 +34,35 @@ func RouteApiCommand(c *gin.Context) {
 		)
 		return
 	}
-	feature.RunHttpCommand(c, command)
+
+	command := &LiquidSDK.CmdCommand{
+		LiquidId: nil,
+		Platform: nil,
+		CmdId:    &featureId,
+		CmdSn:    nil,
+		CmdName:  &cmdName,
+		CmdData:  cmdData,
+	}
+
+	commandExists := feature.IsHttpExists(cmdName)
+	if commandExists {
+		loginClaims, err := middlewares.GetClaim(c)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, LiquidSDK.ResponseError(err.Error()))
+			return
+		}
+		command.LiquidId = &loginClaims.AutoId
+		feature.RunHttpCommand(c, command)
+		return
+	}
+
+	directCommandExists := feature.IsHttpDirectExists(cmdName)
+	if directCommandExists {
+		feature.RunHttpDirectCommand(c, command)
+		return
+	}
+
+	c.JSON(http.StatusBadRequest, gin.H{"error": "FEATURE_COMMAND_NOT_FOUND"})
 	return
+
 }

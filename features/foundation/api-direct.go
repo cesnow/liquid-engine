@@ -26,6 +26,21 @@ func RouteApiDirect(c *gin.Context) {
 		}
 	}
 
+	feature := LiquidSDK.GetServer().GetFeature(featureId)
+	if feature == nil {
+		c.JSON(
+			http.StatusNotFound,
+			LiquidSDK.ResponseError("FEATURE_NOT_FOUND"),
+		)
+		return
+	}
+
+	commandExists := feature.IsHttpDirectExists(cmdName)
+	if !commandExists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "FEATURE_COMMAND_NOT_FOUND"})
+		return
+	}
+
 	command := &LiquidSDK.CmdCommand{
 		LiquidId:    nil,
 		LiquidToken: nil,
@@ -34,15 +49,6 @@ func RouteApiDirect(c *gin.Context) {
 		CmdSn:       nil,
 		CmdName:     &cmdName,
 		CmdData:     cmdData,
-	}
-
-	feature := LiquidSDK.GetServer().GetFeature(*command.CmdId)
-	if feature == nil {
-		c.JSON(
-			http.StatusNotFound,
-			LiquidSDK.ResponseError("FEATURE_NOT_FOUND"),
-		)
-		return
 	}
 	feature.RunHttpDirectCommand(c, command)
 	return

@@ -4,7 +4,6 @@ import (
 	"github.com/cesnow/liquid-engine/logger"
 	"github.com/cesnow/liquid-engine/options"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type CommandSystem interface {
@@ -12,6 +11,8 @@ type CommandSystem interface {
 	RunDirectCommand(*CmdCommand) interface{}
 	RunHttpDirectCommand(*gin.Context, *CmdCommand)
 	RunHttpCommand(*gin.Context, *CmdCommand)
+	IsHttpDirectExists(string) bool
+	IsHttpExists(string) bool
 }
 
 type CommandSDK struct {
@@ -61,14 +62,12 @@ func (system *CommandSDK) RunHttpDirectCommand(c *gin.Context, data *CmdCommand)
 		CmdSn:    data.CmdSn,
 		CmdName:  data.CmdName,
 		CmdData:  data.CmdData}
-	if httpFunc, httpFuncExist := system.drtHttpFunctionDict[*data.CmdName]; httpFuncExist {
-		httpFunc(c, RequestData)
-		c.Abort()
-		return
-	}
-	c.JSON(http.StatusBadRequest, gin.H{"error": "feature command not found"})
-	c.Abort()
-	return
+	system.drtHttpFunctionDict[*data.CmdName](c, RequestData)
+}
+
+func (system *CommandSDK) IsHttpDirectExists(name string) bool {
+	_, find := system.drtHttpFunctionDict[name]
+	return find
 }
 
 func (system *CommandSDK) RunHttpCommand(c *gin.Context, data *CmdCommand) {
@@ -79,14 +78,12 @@ func (system *CommandSDK) RunHttpCommand(c *gin.Context, data *CmdCommand) {
 		CmdSn:    data.CmdSn,
 		CmdName:  data.CmdName,
 		CmdData:  data.CmdData}
-	if httpFunc, httpFuncExist := system.httpFunctionDict[*data.CmdName]; httpFuncExist {
-		httpFunc(c, RequestData)
-		c.Abort()
-		return
-	}
-	c.JSON(http.StatusBadRequest, gin.H{"error": "feature command not found"})
-	c.Abort()
-	return
+	system.httpFunctionDict[*data.CmdName](c, RequestData)
+}
+
+func (system *CommandSDK) IsHttpExists(name string) bool {
+	_, find := system.httpFunctionDict[name]
+	return find
 }
 
 func (system *CommandSDK) Register(name string, f func(string, CommandRequest) interface{}, opts ...*options.CommandOptions) {

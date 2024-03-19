@@ -3,52 +3,36 @@ package middlewares
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	LiquidModels "github.com/cesnow/liquid-engine/liquid-models"
 	LiquidSDK "github.com/cesnow/liquid-engine/liquid-sdk"
 	"github.com/gin-gonic/gin"
 	"github.com/xxtea/xxtea-go/xxtea"
-	"net/http"
 	"time"
 )
 
-func VerifyToken() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		header := c.GetHeader("liquid-token")
-		if header == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_HEADER_REQUIRED"})
-			c.Abort()
-			return
-		}
-		decoded, err := base64.URLEncoding.DecodeString(header)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_HEADER_INVALID"})
-			c.Abort()
-			return
-		}
-		decrypted := xxtea.Decrypt(decoded, []byte(apiUserEncryptedXxTeaKey))
-		var claims *LoginClaims
-		err = json.Unmarshal(decrypted, &claims)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_HEADER_INVALID"})
-			c.Abort()
-			return
-		}
-
-		if claims.Audience != LiquidSDK.GetServer().CodeName {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "LIQUID_TOKEN_AUDIENCE_INVALID"})
-			c.Abort()
-			return
-		}
-
-		if claims.ExpiresAt < time.Now().UnixNano()/int64(time.Millisecond) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "LIQUID_TOKEN_EXPIRED"})
-			c.Abort()
-			return
-		}
-
-		c.Set("LiquidUser", claims)
-		c.Next()
+func GetClaim(c *gin.Context) (*LoginClaims, error) {
+	header := c.GetHeader("liquid-token")
+	if header == "" {
+		return nil, errors.New("LIQUID_TOKEN_HEADER_REQUIRED")
 	}
+	decoded, err := base64.URLEncoding.DecodeString(header)
+	if err != nil {
+		return nil, errors.New("LIQUID_TOKEN_HEADER_INVALID")
+	}
+	decrypted := xxtea.Decrypt(decoded, []byte(apiUserEncryptedXxTeaKey))
+	var claims *LoginClaims
+	err = json.Unmarshal(decrypted, &claims)
+	if err != nil {
+		return nil, errors.New("LIQUID_TOKEN_HEADER_INVALID")
+	}
+	if claims.Audience != LiquidSDK.GetServer().CodeName {
+		return nil, errors.New("LIQUID_TOKEN_AUDIENCE_INVALID")
+	}
+	if claims.ExpiresAt < time.Now().UnixNano()/int64(time.Millisecond) {
+		return nil, errors.New("LIQUID_TOKEN_EXPIRED")
+	}
+	return claims, nil
 }
 
 var apiUserEncryptedXxTeaKey = "-LiquidEngine|Api|User-"

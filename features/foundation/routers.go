@@ -13,10 +13,7 @@ func Routers(gin *gin.Engine) {
 	ApiFoundationRouters.GET("key", RootKey)
 	ApiFoundationRouters.GET(":FeatureId/:CmdName", RouteApiDirect)
 	ApiFoundationRouters.POST("login", RouteApiLogin)
-	ApiFoundationRouters.Use(middlewares.VerifyToken())
-	{
-		ApiFoundationRouters.POST(":FeatureId/:CmdName", RouteApiCommand)
-	}
+	ApiFoundationRouters.POST(":FeatureId/:CmdName", RouteApiCommand)
 
 	CommandFoundationRouters := gin.Group("@")
 	CommandFoundationRouters.GET("", RootKey)
