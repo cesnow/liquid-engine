@@ -13,9 +13,12 @@ type CommandSystem interface {
 	RunHttpCommand(*gin.Context, *CmdCommand)
 	IsHttpDirectExists(string) bool
 	IsHttpExists(string) bool
+	RegisterRouter(func(*gin.RouterGroup))
+	GetRouterFunc() func(*gin.RouterGroup)
 }
 
 type CommandSDK struct {
+	routerFunc          func(*gin.RouterGroup)
 	functionDict        map[string]func(string, CommandRequest) interface{}
 	drtFunctionDict     map[string]func(string, CommandRequest) interface{}
 	httpFunctionDict    map[string]func(*gin.Context, CommandRequest)
@@ -124,4 +127,12 @@ func (system *CommandSDK) RegisterHttp(name string, f func(*gin.Context, Command
 	}
 	system.httpFunctionDict[name] = f
 	logger.SysLog.Debugf("[Engine][OperatorHttpRegister] `%s` Registered", name)
+}
+
+func (system *CommandSDK) RegisterRouter(f func(*gin.RouterGroup)) {
+	system.routerFunc = f
+}
+
+func (system *CommandSDK) GetRouterFunc() func(*gin.RouterGroup) {
+	return system.routerFunc
 }

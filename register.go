@@ -17,6 +17,12 @@ func (engine *Engine) RegisterGin(featureName string, router func(*gin.Engine)) 
 }
 
 func (engine *Engine) RegisterFeature(Cmd string, Instance LiquidSDK.CommandSystem) {
+	// Register Router
+	if Instance.GetRouterFunc() != nil {
+		cmdGroup := engine.ginEngine.Group("/api/" + Cmd)
+		Instance.GetRouterFunc()(cmdGroup)
+	}
+	// Register Command
 	registered := LiquidSDK.GetServer().RegisterFeature(Cmd, Instance)
 	if !registered {
 		logger.SysLog.Warnf(

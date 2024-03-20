@@ -1,7 +1,6 @@
 package system
 
 import (
-	"github.com/cesnow/liquid-engine/internal/feature-register"
 	LiquidSDK "github.com/cesnow/liquid-engine/liquid-sdk"
 	"github.com/cesnow/liquid-engine/options"
 	"github.com/gin-gonic/gin"
@@ -17,7 +16,17 @@ func NewEchoSystem() LiquidSDK.CommandSystem {
 	echo.Register("ping", echo.Ping, options.Command().WithHttpSupport())
 	echo.RegisterDirect("direct", echo.Direct, options.Command().WithHttpSupport())
 	echo.Register("error-test", echo.ErrorTest, options.Command().WithHttpSupport())
+
+	echo.RegisterRouter(echo.UseRouter)
+
 	return echo
+}
+
+func (echo *EchoSystem) UseRouter(router *gin.RouterGroup) {
+	// if same command name, the UseRouter will be overwritten
+	router.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{"result": "pong2"})
+	})
 }
 
 func (echo *EchoSystem) Echo(LiquidID string, CmdData LiquidSDK.CommandRequest) interface{} {
@@ -36,6 +45,7 @@ func (echo *EchoSystem) ErrorTest(LiquidID string, CmdData LiquidSDK.CommandRequ
 	return LiquidSDK.CmdErrorResponse{Error: "TEST_ERROR"}
 }
 
-func init() {
-	feature_register.AddFeature("echo", NewEchoSystem())
-}
+//
+//func init() {
+//	feature_register.AddFeature("echo", NewEchoSystem())
+//}
