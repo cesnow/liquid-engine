@@ -8,6 +8,7 @@ import (
 	LiquidSDK "github.com/cesnow/liquid-engine/liquid-sdk"
 	"github.com/gin-gonic/gin"
 	"github.com/xxtea/xxtea-go/xxtea"
+	"net/http"
 	"time"
 )
 
@@ -64,4 +65,16 @@ func GenerateToken(user *LiquidModels.LiquidUser) string {
 	encryptedData := xxtea.Encrypt(data, []byte(apiUserEncryptedXxTeaKey))
 	ResultData := base64.URLEncoding.EncodeToString(encryptedData)
 	return ResultData
+}
+
+func CommandRouteResponse(c *gin.Context, response any) {
+	if response != nil {
+		if _, ok := response.(LiquidSDK.CmdErrorResponse); ok {
+			c.JSON(http.StatusInternalServerError, response)
+			return
+		}
+		c.JSON(http.StatusOK, response)
+		return
+	}
+	c.JSON(http.StatusInternalServerError, LiquidSDK.ResponseError("NO_RESPONSE_DATA"))
 }
