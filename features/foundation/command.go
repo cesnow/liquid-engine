@@ -7,6 +7,7 @@ import (
 	LiquidDB "github.com/cesnow/liquid-engine/liquid-db"
 	"github.com/cesnow/liquid-engine/liquid-sdk"
 	"github.com/cesnow/liquid-engine/logger"
+	UtilLiquid "github.com/cesnow/liquid-engine/utils/liquid"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -66,6 +67,6 @@ func RouteCommand(c *gin.Context) {
 		CmdData: runCommandData,
 		CmdSn:   command.CmdSn,
 	}
-	middlewares.CommandResponse(c, result)
+	UtilLiquid.CommandResponse(c, result)
 	return
 }
